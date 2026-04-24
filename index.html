@@ -562,7 +562,7 @@ function saveToLS(){
         id:m.id, name:m.name, rawText:m.rawText, 
         sel:m.sel||[], totalQ: m.totalQ||400, 
         notas: m.notas||"", strategy: m.strategy||'equilibrado',
-        folderId: m.folderId
+        folderId: m.folderId, os: (ACTIVE_ID === m.id ? OS : (m.os || {}))
       };
     });
     database.ref('usuarios/' + CURRENT_USER.uid + '/meus_estudos/').set({
@@ -601,7 +601,7 @@ function loadFromLS(){
           MATERIAS.push({
             id:m.id, name:m.name, rawText:m.rawText, tree:parsed.tree, 
             sel:m.sel||[], totalQ: m.totalQ||400, notas: m.notas||"", strategy: str,
-            folderId: m.folderId
+            folderId: m.folderId, os: m.os || {}
           });
         }catch(e){ console.error("Erro ao processar matéria salva:", e); }
       });
@@ -771,7 +771,7 @@ function navMateria(dir) {
 function switchMateria(id){
   var m = MATERIAS.find(function(x){return x.id===id;}); 
   if(!m) return; 
-  ACTIVE_ID = id; TREE = m.tree; OS = {}; 
+  ACTIVE_ID = id; TREE = m.tree; OS = m.os || {}; 
   CURRENT_VIEW = 'app';
   saveSession();
   
@@ -792,7 +792,7 @@ function switchMateria(id){
 function openMateria(id){
   var m = MATERIAS.find(function(x){return x.id===id;}); 
   if(!m) return; 
-  ACTIVE_ID = id; TREE = m.tree; OS = {}; 
+  ACTIVE_ID = id; TREE = m.tree; OS = m.os || {}; 
   CURRENT_VIEW = 'app';
   saveSession();
   
@@ -841,7 +841,7 @@ function C(p){
   if(p>=0.7) return{dot:'var(--blue)',  bg:'var(--blue-bg)',  lbl:'Baixa'};
   return       {dot:'var(--green)', bg:'var(--green-bg)', lbl:'Muito baixa'};
 }
-function nid(n){return n._id||(n._id='x'+(++UID));}
+function nid(n){return n.h;}
 function BDG(qty,pct,cls){var c=C(pct);return'<span class="'+cls+'" style="background:'+c.bg+';color:'+c.dot+'">'+qty+' questões</span>';}
 function BDGs(qty,pct,cls){var c=C(pct);return'<span class="'+cls+'" style="background:'+c.bg+';color:'+c.dot+'">'+qty+' q.</span>';}
 
@@ -1156,6 +1156,7 @@ function renderRel(){var m = MATERIAS.find(function(x){ return x.id === ACTIVE_I
 function T(i){
   if(OS[i] === undefined) { OS[i] = false; } 
   else { OS[i] = !OS[i]; }
+  saveToLS();
   render();
 }
 
