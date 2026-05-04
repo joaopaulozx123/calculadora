@@ -669,6 +669,7 @@ function renderHome(){
     if(!p) return;
     var mCount = MATERIAS.filter(function(m) { return m && m.folderId === p.id; }).length;
     html += '<div class="saved-card" onclick="openFolder(\''+p.id+'\')">'+
+              '<div class="card-actions" onclick="event.stopPropagation()">'+
                 '<button class="btn-dots" onclick="toggleMenu(\'f_'+p.id+'\', event)" title="Opções">⋮</button>'+
                 '<div class="dropdown-menu" id="menu-f_'+p.id+'">'+
                   '<button class="dropdown-item" onclick="renameFolder(\''+p.id+'\'); closeAllMenus(event)">✎ Renomear</button>'+
