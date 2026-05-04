@@ -658,10 +658,10 @@ function renderHome(){
   var grid = document.getElementById('saved-grid');
   var html = '';
   
-  PASTAS.forEach(function(p){
+  PASTAS.forEach(function(p, index){
     if(!p) return;
     var mCount = MATERIAS.filter(function(m) { return m && m.folderId === p.id; }).length;
-    html += '<div class="saved-card" onclick="openFolder(\''+p.id+'\')">'+
+    html += '<div class="saved-card" draggable="true" ondragstart="dragStartF(event, '+index+')" ondragover="dragOver(event)" ondrop="dropF(event, '+index+')" ondragend="dragEnd(event)" onclick="openFolder(\''+p.id+'\')">'+
               '<div class="card-actions" onclick="event.stopPropagation()">'+
                 '<button class="btn-dots" onclick="toggleMenu(\'f_'+p.id+'\', event)" title="Opções">⋮</button>'+
                 '<div class="dropdown-menu" id="menu-f_'+p.id+'">'+
@@ -697,7 +697,7 @@ function openFolder(id){
   var folderMaterias = MATERIAS.filter(function(m) { return m && m.folderId === id; });
   folderMaterias.forEach(function(m){
     var leaves=[]; function gl(n){if(!n.children||!n.children.length){leaves.push(n);return;}n.children.forEach(gl);} m.tree.forEach(gl);
-    html += '<div class="saved-card" onclick="openMateria(\''+m.id+'\')">'+
+    html += '<div class="saved-card" draggable="true" ondragstart="dragStartM(event, \''+m.id+'\')" ondragover="dragOver(event)" ondrop="dropM(event, \''+m.id+'\')" ondragend="dragEnd(event)" onclick="openMateria(\''+m.id+'\')">'+
               '<div class="card-actions" onclick="event.stopPropagation()">'+
                 '<button class="btn-dots" onclick="toggleMenu(\'m_'+m.id+'\', event)" title="Opções">⋮</button>'+
                 '<div class="dropdown-menu" id="menu-m_'+m.id+'">'+
@@ -729,6 +729,18 @@ function renameFolder(id) {
     p.name = novo.trim();
     saveToLS();
     renderHome();
+  }
+}
+
+function editMateriaName(id) {
+  var m = MATERIAS.find(function(x) { return x.id === id; });
+  if(!m) return;
+  
+  var novo = prompt("Renomear matéria:", m.name);
+  if(novo && novo.trim() !== "") {
+    m.name = novo.trim();
+    saveToLS();
+    openFolder(ACTIVE_FOLDER_ID); 
   }
 }
 
@@ -1215,6 +1227,33 @@ document.getElementById('paste-input').addEventListener('keydown',function(e){if
 document.getElementById('total').addEventListener('keydown',function(e){if(e.key==='Enter')render();});
 document.getElementById('total').addEventListener('input', setBtnChanged);
 document.getElementById('modal').addEventListener('click',function(e){if(e.target===this)closeModal();});
+/* LÓGICA DE ORGANIZAÇÃO (DRAG & DROP) */
+function dragOver(e) { e.preventDefault(); }
+function dragEnd(e) { e.target.style.opacity = '1'; }
+
+var dragFIndex = null;
+function dragStartF(e, index) { dragFIndex = index; setTimeout(function() { e.target.style.opacity = '0.4'; }, 0); }
+function dropF(e, dropIndex) {
+  e.preventDefault();
+  if (dragFIndex === null || dragFIndex === dropIndex) return;
+  var draggedItem = PASTAS.splice(dragFIndex, 1)[0];
+  PASTAS.splice(dropIndex, 0, draggedItem);
+  saveToLS(); renderHome();
+}
+
+var dragMId = null;
+function dragStartM(e, id) { dragMId = id; setTimeout(function() { e.target.style.opacity = '0.4'; }, 0); }
+function dropM(e, dropId) {
+  e.preventDefault();
+  if (!dragMId || dragMId === dropId) return;
+  var fromIdx = MATERIAS.findIndex(function(m) { return m.id === dragMId; });
+  var toIdx = MATERIAS.findIndex(function(m) { return m.id === dropId; });
+  if (fromIdx > -1 && toIdx > -1) {
+    var item = MATERIAS.splice(fromIdx, 1)[0];
+    MATERIAS.splice(toIdx, 0, item);
+    saveToLS(); openFolder(ACTIVE_FOLDER_ID);
+  }
+}
 </script>
 </body>
 </html>
