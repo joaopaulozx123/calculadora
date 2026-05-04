@@ -277,6 +277,13 @@ footer{max-width:1060px; margin:0 auto; padding:1.25rem 2rem 3rem; border-top:1p
 #foot-stats{font-size:13.5px; color:var(--t2); font-weight:600; margin-bottom:8px; transition: color 0.3s;}
 .disclaimer{font-size:11.5px; color:var(--t3); line-height:1.5;}
 </style>
+<script src="https://cdn.jsdelivr.net/npm/sortablejs@latest/Sortable.min.js"></script>
+<style>
+  /* Estilo do item que fica "no fundo" enquanto você arrasta */
+  .sortable-ghost { opacity: 0.3 !important; background: var(--s2) !important; border: 2px dashed var(--acc) !important; transform: scale(0.98); }
+  /* Estilo da sombra do item que está na sua mão */
+  .sortable-drag { cursor: grabbing !important; box-shadow: 0 20px 40px rgba(0,0,0,0.3) !important; }
+</style>
 </head>
 <body>
 
@@ -658,11 +665,10 @@ function renderHome(){
   var grid = document.getElementById('saved-grid');
   var html = '';
   
-  PASTAS.forEach(function(p, index){
+  PASTAS.forEach(function(p){
     if(!p) return;
     var mCount = MATERIAS.filter(function(m) { return m && m.folderId === p.id; }).length;
-    html += '<div class="saved-card" draggable="true" ondragstart="dragStartF(event, '+index+')" ondragover="dragOver(event)" ondrop="dropF(event, '+index+')" ondragend="dragEnd(event)" onclick="openFolder(\''+p.id+'\')">'+
-              '<div class="card-actions" onclick="event.stopPropagation()">'+
+    html += '<div class="saved-card" onclick="openFolder(\''+p.id+'\')">'+
                 '<button class="btn-dots" onclick="toggleMenu(\'f_'+p.id+'\', event)" title="Opções">⋮</button>'+
                 '<div class="dropdown-menu" id="menu-f_'+p.id+'">'+
                   '<button class="dropdown-item" onclick="renameFolder(\''+p.id+'\'); closeAllMenus(event)">✎ Renomear</button>'+
@@ -674,6 +680,7 @@ function renderHome(){
   });
   html += '<button class="add-new-card" onclick="createFolder()">＋ Nova pasta</button>'; 
   grid.innerHTML = html;
+  initSortable('pastas');
 }
 
 function openFolder(id){
@@ -697,7 +704,7 @@ function openFolder(id){
   var folderMaterias = MATERIAS.filter(function(m) { return m && m.folderId === id; });
   folderMaterias.forEach(function(m){
     var leaves=[]; function gl(n){if(!n.children||!n.children.length){leaves.push(n);return;}n.children.forEach(gl);} m.tree.forEach(gl);
-    html += '<div class="saved-card" draggable="true" ondragstart="dragStartM(event, \''+m.id+'\')" ondragover="dragOver(event)" ondrop="dropM(event, \''+m.id+'\')" ondragend="dragEnd(event)" onclick="openMateria(\''+m.id+'\')">'+
+    html += '<div class="saved-card" onclick="openMateria(\''+m.id+'\')">'+
               '<div class="card-actions" onclick="event.stopPropagation()">'+
                 '<button class="btn-dots" onclick="toggleMenu(\'m_'+m.id+'\', event)" title="Opções">⋮</button>'+
                 '<div class="dropdown-menu" id="menu-m_'+m.id+'">'+
@@ -710,6 +717,7 @@ function openFolder(id){
   });
   html += '<button class="add-new-card" onclick="openCreateModal()">＋ Nova matéria</button>'; 
   grid.innerHTML = html;
+  initSortable('materias');
 }
 
 function createFolder() {
@@ -1227,32 +1235,43 @@ document.getElementById('paste-input').addEventListener('keydown',function(e){if
 document.getElementById('total').addEventListener('keydown',function(e){if(e.key==='Enter')render();});
 document.getElementById('total').addEventListener('input', setBtnChanged);
 document.getElementById('modal').addEventListener('click',function(e){if(e.target===this)closeModal();});
-/* LÓGICA DE ORGANIZAÇÃO (DRAG & DROP) */
-function dragOver(e) { e.preventDefault(); }
-function dragEnd(e) { e.target.style.opacity = '1'; }
+/* ══════════════════════════════════════════
+   SISTEMA DE DRAG E DROP MODERNO (SORTABLE)
+══════════════════════════════════════════ */
+var currentSortable = null;
 
-var dragFIndex = null;
-function dragStartF(e, index) { dragFIndex = index; setTimeout(function() { e.target.style.opacity = '0.4'; }, 0); }
-function dropF(e, dropIndex) {
-  e.preventDefault();
-  if (dragFIndex === null || dragFIndex === dropIndex) return;
-  var draggedItem = PASTAS.splice(dragFIndex, 1)[0];
-  PASTAS.splice(dropIndex, 0, draggedItem);
-  saveToLS(); renderHome();
-}
-
-var dragMId = null;
-function dragStartM(e, id) { dragMId = id; setTimeout(function() { e.target.style.opacity = '0.4'; }, 0); }
-function dropM(e, dropId) {
-  e.preventDefault();
-  if (!dragMId || dragMId === dropId) return;
-  var fromIdx = MATERIAS.findIndex(function(m) { return m.id === dragMId; });
-  var toIdx = MATERIAS.findIndex(function(m) { return m.id === dropId; });
-  if (fromIdx > -1 && toIdx > -1) {
-    var item = MATERIAS.splice(fromIdx, 1)[0];
-    MATERIAS.splice(toIdx, 0, item);
-    saveToLS(); openFolder(ACTIVE_FOLDER_ID);
-  }
+function initSortable(type) {
+  var grid = document.getElementById('saved-grid');
+  if(!grid) return;
+  
+  if(currentSortable) currentSortable.destroy(); // Limpa se já existir
+  
+  currentSortable = new Sortable(grid, {
+    animation: 250, // Animação super suave de 250ms
+    ghostClass: 'sortable-ghost', 
+    dragClass: 'sortable-drag',
+    filter: '.add-new-card', // Impede que você arraste o botão "Nova pasta"
+    preventOnFilter: false,
+    onEnd: function (evt) {
+      if(evt.oldIndex === evt.newIndex) return; 
+      
+      if(type === 'pastas') {
+        var draggedItem = PASTAS.splice(evt.oldIndex, 1)[0];
+        PASTAS.splice(evt.newIndex, 0, draggedItem);
+      } 
+      else if(type === 'materias') {
+        var folderMaterias = MATERIAS.filter(function(m) { return m && m.folderId === ACTIVE_FOLDER_ID; });
+        var outrasMaterias = MATERIAS.filter(function(m) { return !m || m.folderId !== ACTIVE_FOLDER_ID; });
+        
+        var draggedItem = folderMaterias.splice(evt.oldIndex, 1)[0];
+        folderMaterias.splice(evt.newIndex, 0, draggedItem);
+        
+        // Reconstrói a lista geral e salva
+        MATERIAS = outrasMaterias.concat(folderMaterias);
+      }
+      saveToLS();
+    }
+  });
 }
 </script>
 </body>
