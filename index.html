@@ -1,1336 +1,1279 @@
 <!DOCTYPE html>
-<html lang="pt-BR" data-theme="light">
+<html lang="pt-BR" data-theme="dark">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Direito de Empresa — Prazos, Quóruns e Números</title>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Calculadora de Questões 3.8.6</title>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet"/>
 <style>
-  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+[data-theme="dark"]{
+  --bg:#1E1E24;--bg2:#252530;--s1:#2A2A35;--s2:#30303C;--s3:#363643;--s4:#3C3C4A;
+  --b1:rgba(255,255,255,0.07);--b2:rgba(255,255,255,0.13);--b3:rgba(255,255,255,0.22);
+  --t1:#EDEAE6;--t2:#98968F;--t3:#56544F;--hdr-bg:rgba(30,30,36,0.93);--acc:#5B8EF0;--shadow:rgba(0,0,0,0.4);
+}
+[data-theme="light"]{
+  --bg:#F5F2EC;--bg2:#EDE9E1;--s1:#FDFAF5;--s2:#F0EDE6;--s3:#E8E4DC;--s4:#DDD9D0;
+  --b1:rgba(0,0,0,0.07);--b2:rgba(0,0,0,0.12);--b3:rgba(0,0,0,0.22);
+  --t1:#1A1916;--t2:#6B6860;--t3:#ADA9A0;--hdr-bg:rgba(245,242,236,0.93);--acc:#3D6FD4;--shadow:rgba(0,0,0,0.1);
+}
+:root{
+  --red:#D94F4F;--red-bg:rgba(217,79,79,.13);
+  --orange:#C97830;--orange-bg:rgba(201,120,48,.13);
+  --yellow:#B89820;--yellow-bg:rgba(184,152,32,.13);
+  --blue:#3E8AD4;--blue-bg:rgba(62,138,212,.13);
+  --green:#2EAA74;--green-bg:rgba(46,170,116,.13);
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{font-size:16px}
+body{font-family:'Plus Jakarta Sans',system-ui,sans-serif;background:var(--bg);color:var(--t1);min-height:100vh;-webkit-font-smoothing:antialiased;transition:background .25s,color .25s;}
 
-  /* TEMA CLARO (Bege/Branco) */
-  :root {
-    --bg: #F7F5F0;           /* Bege bem suave para o fundo */
-    --surface: #FFFFFF;      /* Branco puro para os cartões */
-    --surface2: #F0EDE4;     /* Bege um pouco mais escuro para hover */
-    --border: #E5E2D9;
-    --border2: #D1CDBF;
-    --text: #2C2A26;         /* Cinza muito escuro, mais suave que preto */
-    --muted: #6B685E;
-    --faint: #9E9A8E;
-    
-    /* Cores de Destaque no Modo Claro */
-    --accent: #059669;       /* Verde Esmeralda */
-    --accent2: #0284C7;      /* Azul */
-    --accent3: #D97706;      /* Laranja/Âmbar */
-    --accent4: #DC2626;      /* Vermelho */
-    
-    /* Fundos de Destaque Translúcidos (Claro) */
-    --accent-dim: #ECFDF5;
-    --accent-dim-strong: #A7F3D0;
-    --accent2-dim: #F0F9FF;
-    --accent2-dim-strong: #BAE6FD;
-    --accent3-dim: #FFFBEB;
-    --accent3-dim-strong: #FDE68A;
-    --accent4-dim: #FEF2F2;
-    --accent4-dim-strong: #FECACA;
+/* ── ICON BUTTONS ── */
+.icon-btn{width:40px;height:40px;border-radius:50%;background:var(--s2);border:1px solid var(--b2);cursor:pointer;font-size:17px;display:flex;align-items:center;justify-content:center;transition:all .2s;flex-shrink:0;}
+.icon-btn:hover{background:var(--s3);border-color:var(--b3);}
 
-    --font: 'Inter', sans-serif;
-    --mono: 'JetBrains Mono', monospace;
-    --radius: 12px;
-    --radius-lg: 20px;
-    --shadow: 0 4px 20px rgba(0, 0, 0, 0.03);
+/* ── LOGIN SCREEN ── */
+#login-screen{display:flex; flex-direction:column; align-items:center; justify-content:center; min-height:100vh; padding:2rem; text-align:center;}
+.login-box{background:var(--s1); border:1px solid var(--b1); border-radius:16px; padding:3rem 2rem; max-width:400px; width:100%; box-shadow:0 20px 60px var(--shadow); display:flex; flex-direction:column; gap:1.5rem; position:relative;}
+.login-box h1{font-size:24px; font-weight:800; color:var(--t1); letter-spacing:-.03em; margin-bottom:4px;}
+.login-box p{font-size:14.5px; color:var(--t2); line-height:1.6;}
+.btn-google{display:flex; align-items:center; justify-content:center; gap:12px; background:var(--s2); border:1px solid var(--b2); border-radius:12px; padding:14px 20px; font-size:15px; font-weight:700; color:var(--t1); cursor:pointer; transition:all .2s; width:100%; font-family:inherit;}
+.btn-google:hover{background:var(--s3); border-color:var(--b3); transform:translateY(-1px);}
+.btn-google:active{transform:translateY(1px);}
+.btn-google svg{width:22px; height:22px;}
+#login-err{color:var(--red); font-size:13px; font-weight:600; display:none; background:var(--red-bg); padding:10px; border-radius:8px;}
+.loader{display:none; width:20px; height:20px; border:3px solid var(--b2); border-top-color:var(--acc); border-radius:50%; animation:spin 1s linear infinite;}
+@keyframes spin { 100% { transform:rotate(360deg); } }
+
+/* ── HOME SCREEN (PASTAS E MATÉRIAS) ── */
+#home-screen{max-width:780px; margin:0 auto; padding:3.5rem 2rem 5rem; display:none; flex-direction:column; gap:2rem;}
+/* Alterado para centralizar a Home e quebrar linha se necessário */
+.home-top{display:flex; align-items:center; justify-content:center; flex-wrap:wrap; gap:1.5rem; text-align:center;}
+.home-head{display:flex; flex-direction:column; align-items:center;}
+.home-head h1{font-size:30px; font-weight:800; letter-spacing:-.035em; color:var(--t1); margin-bottom:6px;}
+.home-head p{font-size:15px; color:var(--t2); line-height:1.6;}
+.nav-link{cursor:pointer; color:var(--acc); font-weight:600; transition:opacity .2s;}
+.nav-link:hover{opacity:.8;}
+
+.user-controls{display:flex; align-items:center; justify-content:center; gap:12px;}
+.logout-btn{background:none; border:1px solid var(--b2); color:var(--t2); padding:8px 14px; border-radius:10px; font-size:13px; font-weight:600; cursor:pointer; transition:all .15s; font-family:inherit;}
+.logout-btn:hover{background:var(--s2); color:var(--t1); border-color:var(--b3);}
+
+.saved-section h2{font-size:16px; font-weight:700; color:var(--t1); margin-bottom:12px; text-align:left;}
+.saved-grid{display:grid; grid-template-columns:repeat(auto-fill,minmax(220px,1fr)); gap:10px;}
+.saved-card{background:var(--s1); border:1px solid var(--b1); border-radius:13px; padding:16px 18px; cursor:pointer; transition:border-color .2s,background .15s; display:flex; flex-direction:column; gap:6px; position:relative; text-align:left;}
+.saved-card:hover{border-color:var(--b2); background:var(--s2);}
+.saved-card-name{font-size:15px; font-weight:700; color:var(--t1); padding-right:30px; word-wrap: break-word;}
+.saved-card-meta{font-size:12.5px; color:var(--t2);}
+.card-actions{position:absolute; top:10px; right:10px; display:flex; flex-direction:column; align-items:flex-end;}
+
+/* Botão 3 pontinhos e Menu */
+.btn-dots { width:30px; height:30px; border-radius:8px; background:none; border:none; cursor:pointer; font-size:18px; color:var(--t2); display:flex; align-items:center; justify-content:center; transition:all .15s; font-weight:700; line-height:1; }
+.btn-dots:hover { background:var(--s3); color:var(--t1); }
+.dropdown-menu { position:absolute; top:36px; right:0; background:var(--hdr-bg); backdrop-filter:blur(12px); -webkit-backdrop-filter:blur(12px); border:1px solid var(--b2); border-radius:12px; padding:6px; min-width:190px; box-shadow:0 10px 30px var(--shadow); opacity:0; pointer-events:none; transform:translateY(-10px); transition:all .2s; z-index:20; text-align:left; }
+.dropdown-menu.show { opacity:1; pointer-events:auto; transform:translateY(0); }
+.dropdown-item { display:flex; align-items:center; gap:10px; width:100%; padding:10px 12px; background:none; border:none; border-radius:8px; font-size:13.5px; font-weight:600; color:var(--t1); cursor:pointer; font-family:inherit; transition:background .15s; text-align:left; }
+.dropdown-item:hover { background:var(--s2); }
+.dropdown-item.del-item:hover { background:var(--red-bg); color:var(--red); }
+
+.add-new-card{background:none; border:2px dashed var(--b2); border-radius:13px; padding:16px 18px; cursor:pointer; transition:border-color .2s,background .15s; display:flex; align-items:center; justify-content:center; gap:8px; font-size:14px; font-weight:600; color:var(--t2); font-family:inherit; min-height:80px;}
+.add-new-card:hover{border-color:var(--acc); color:var(--acc); background:var(--s1);}
+
+/* ── PASTE MODAL ── */
+.modal-overlay{display:none; position:fixed; inset:0; z-index:200; background:rgba(0,0,0,0.55); backdrop-filter:blur(6px); align-items:center; justify-content:center; padding:2rem;}
+.modal-overlay.open{display:flex;}
+.modal{background:var(--s1); border:1px solid var(--b2); border-radius:16px; width:100%; max-width:600px; padding:2rem; display:flex; flex-direction:column; gap:1.5rem; box-shadow:0 20px 60px rgba(0,0,0,0.4);}
+.modal-head{display:flex; align-items:center; justify-content:space-between;}
+.modal-head h2{font-size:20px; font-weight:800; letter-spacing:-.02em;}
+.modal-close{background:none; border:none; cursor:pointer; font-size:22px; color:var(--t2); line-height:1; padding:4px;}
+.modal-close:hover{color:var(--t1);}
+.steps{display:flex; flex-direction:column; gap:8px;}
+.step{display:flex; align-items:flex-start; gap:12px; background:var(--s2); border-radius:10px; padding:12px 14px;}
+.step-num{width:24px; height:24px; border-radius:50%; background:var(--acc); color:#fff; font-size:11px; font-weight:700; display:flex; align-items:center; justify-content:center; flex-shrink:0; margin-top:1px;}
+.step-text{font-size:14px; color:var(--t2); line-height:1.6;}
+.step-text strong{color:var(--t1); font-weight:600;}
+textarea{width:100%; height:170px; background:var(--s2); border:1.5px solid var(--b2); border-radius:12px; color:var(--t1); font-family:'Plus Jakarta Sans',system-ui,sans-serif; font-size:13.5px; padding:14px 16px; resize:vertical; outline:none; transition:border-color .2s; line-height:1.6;}
+textarea:focus{border-color:var(--acc);}
+textarea::placeholder{color:var(--t3);}
+.modal-actions{display:flex; gap:10px; align-items:center; flex-wrap:wrap;}
+.btn-primary{padding:11px 28px; background:var(--acc); color:#fff; border:none; border-radius:10px; font-size:14px; font-weight:700; cursor:pointer; font-family:inherit; transition:opacity .15s;}
+.btn-primary:hover{opacity:.85;}
+.btn-secondary{padding:11px 20px; background:var(--s2); color:var(--t2); border:1px solid var(--b2); border-radius:10px; font-size:14px; font-weight:600; cursor:pointer; font-family:inherit; transition:all .15s;}
+.btn-secondary:hover{color:var(--t1); border-color:var(--b3);}
+.err-msg{font-size:13px; color:var(--red); display:none;}
+
+/* ── APP HEADER E TOGGLE CENTRALIZADO ── */
+#app{display:none;}
+header{position:sticky; top:0; z-index:100; background:var(--hdr-bg); backdrop-filter:blur(24px); -webkit-backdrop-filter:blur(24px); border-bottom:1px solid var(--b1); transition:background .25s;}
+
+/* Alterado para centralizar tudo e permitir quebra (wrap) */
+.hdr{max-width:1060px; margin:0 auto; padding:12px 2rem; min-height:70px; display:flex; align-items:center; justify-content:center; gap:1.5rem; flex-wrap:wrap;}
+
+.hdr-nav{display:flex; align-items:center; justify-content:center; gap:12px; background:var(--s2); padding:4px; border-radius:12px; border:1px solid var(--b1);}
+.nav-btn{background:none; border:none; color:var(--t2); width:32px; height:32px; border-radius:8px; cursor:pointer; font-size:16px; display:flex; align-items:center; justify-content:center; transition:all 0.15s;}
+.nav-btn:hover:not(:disabled){background:var(--s3); color:var(--t1);}
+.nav-btn:disabled{opacity:0.3; cursor:not-allowed;}
+.nav-title{font-size:15px; font-weight:700; color:var(--t1); padding:0 8px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; max-width:300px; text-align:center;}
+
+/* Alterado para centralizar o grupo da direita */
+.hdr-right{display:flex; align-items:center; justify-content:center; gap:8px; flex-shrink:0; flex-wrap: wrap;}
+.qty-wrap{display:flex; align-items:center; justify-content:center; gap:8px; flex-wrap: wrap;}
+
+.qty-lbl{font-size:11px; color:var(--t2); text-transform:uppercase; letter-spacing:.07em; font-weight:600; white-space:nowrap;}
+.qty-ctrl{display:flex; align-items:center; background:var(--s2); border:1px solid var(--b2); border-radius:11px; overflow:hidden;}
+.qty-ctrl .step-btn{background:none; border:none; cursor:pointer; color:var(--t2); width:38px; height:38px; font-size:20px; display:flex; align-items:center; justify-content:center; transition:color .15s,background .15s; font-family:inherit;}
+.qty-ctrl .step-btn:hover{color:var(--t1); background:var(--s3);}
+.qty-ctrl input{background:none; border:none; outline:none; color:var(--t1); font-family:inherit; font-size:17px; font-weight:700; width:80px; text-align:center; -moz-appearance:textfield;}
+.qty-ctrl input::-webkit-inner-spin-button,.qty-ctrl input::-webkit-outer-spin-button{-webkit-appearance:none;}
+
+/* Controle Segmentado (Estratégia) */
+.seg-ctrl { display:flex; background:var(--s2); border-radius:10px; padding:4px; border:1px solid var(--b2); overflow:hidden; }
+.seg-btn { background:transparent; border:none; padding:6px 12px; border-radius:7px; font-size:12px; font-weight:600; color:var(--t2); cursor:pointer; transition:all 0.2s; font-family:inherit; white-space:nowrap; }
+.seg-btn.active { background:var(--s4); color:var(--t1); box-shadow:0 1px 3px var(--shadow); }
+.seg-btn:hover:not(.active) { color:var(--t1); }
+
+/* ESTILOS INTELIGENTES DO BOTÃO APLICAR */
+.apply-btn{height:38px; padding:0 16px; border-radius:9px; font-size:13.5px; font-weight:700; cursor:pointer; font-family:inherit; transition:all .2s; white-space:nowrap; border: 1px solid transparent;}
+.apply-btn.saved{background: transparent; border-color: var(--acc); color: var(--acc);}
+.apply-btn.saved:hover{background: rgba(91,142,240,0.1);}
+.apply-btn.changed{background: var(--orange); border-color: var(--orange); color: #fff;}
+.apply-btn.changed:hover{opacity: .87;}
+.apply-btn:active{transform:scale(.96);}
+
+.back-btn{height:38px; padding:0 14px; background:var(--s2); border:1px solid var(--b2); border-radius:9px; font-size:13.5px; font-weight:600; color:var(--t2); cursor:pointer; font-family:inherit; transition:all .15s; white-space:nowrap;}
+.back-btn:hover{color:var(--t1); border-color:var(--b3);}
+
+/* ── TOOLBAR & MAIN CENTRALIZADO ── */
+.toolbar{border-bottom:1px solid var(--b1); background:var(--bg2); transition:background .25s;}
+
+/* Alterado para centralizar e quebrar linha */
+.tbar{max-width:1060px; margin:0 auto; padding:10px 2rem; min-height:54px; display:flex; align-items:center; justify-content:center; gap:1.5rem; flex-wrap:wrap;}
+
+.mode-tabs{display:flex; gap:4px; background:var(--s2); border-radius:10px; padding:4px;}
+.tab{padding:7px 17px; border-radius:7px; font-size:14px; font-weight:600; cursor:pointer; color:var(--t2); border:none; background:none; transition:all .18s; font-family:inherit;}
+.tab.active{background:var(--s4); color:var(--t1);}
+.tab:hover:not(.active){color:var(--t1);}
+.meta{display:flex; align-items:center; justify-content:center; gap:18px; flex-wrap:wrap;}
+.mi{font-size:13.5px; color:var(--t2); transition: color 0.3s;}
+.mi span{color:var(--t1); font-weight:700;}
+
+/* Centralizado as legendas */
+.legend{display:flex; gap:5px; align-items:center; justify-content:center; flex-wrap:wrap;}
+
+.leg{display:flex; align-items:center; gap:7px; font-size:12px; font-weight:500; color:var(--t2); background:var(--s1); border:1px solid var(--b1); border-radius:20px; padding:5px 11px 5px 9px; white-space:nowrap;}
+.leg-dot{width:9px; height:9px; border-radius:50%; flex-shrink:0;}
+.leg-val{font-size:11.5px; color:var(--t1); font-weight:700; margin-left:1px;}
+main{max-width:1060px; margin:0 auto; padding:1.75rem 2rem 10rem;}
+
+/* ── COMPONENTES DO MAIN ── */
+.chk {width: 18px; height: 18px; border: 2px solid var(--b3); border-radius: 5px; display: flex; align-items: center; justify-content: center; cursor: pointer; transition: all 0.2s; flex-shrink: 0; background: var(--s2);}
+.chk:hover { border-color: var(--acc); }
+.chk.on { background: var(--acc); border-color: var(--acc); }
+.chk.partial { background: var(--s4); border-color: var(--b3); }
+.chk.partial::after { content: ''; width: 8px; height: 2px; background: var(--t1); border-radius: 2px; }
+.chk-svg { display: none; width: 11px; height: 11px; fill: none; stroke: #fff; stroke-width: 2.5; stroke-linecap: round; stroke-linejoin: round; }
+.chk.on .chk-svg { display: block; }
+.block{background:var(--s1); border:1px solid var(--b1); border-radius:14px; overflow:hidden; margin-bottom:7px; box-shadow:0 1px 4px var(--shadow); transition:border-color .2s;}
+.block:hover{border-color:var(--b2);}
+.row{display:flex; align-items:center; justify-content:space-between; gap:1rem; user-select:none; transition:background .15s;}
+.row:hover{background:var(--s2);}
+.rl{display:flex; align-items:center; gap:12px; flex:1; min-width:0;}
+.rr{display:flex; align-items:center; gap:12px; flex-shrink:0;}
+.r1{padding:17px 22px; cursor:pointer;}
+.d1{width:13px; height:13px; border-radius:50%; flex-shrink:0;}
+.n1{font-size:17px; font-weight:700; color:var(--t1); letter-spacing:-.018em;}
+.pct{font-size:13px; color:var(--t2);}
+.badge{font-size:14px; font-weight:700; padding:6px 16px; border-radius:9px; white-space:nowrap;}
+.cv{font-size:12px; color:var(--t2); transition:transform .22s;}
+.cv.o{transform:rotate(180deg);}
+.sep{border-bottom:1px solid var(--b1);}
+.ch{display:none;}.ch.o{display:block;}
+.r2{padding:14px 22px 14px 46px; cursor:pointer; border-bottom:1px solid var(--b1);}
+.r2:last-child{border-bottom:none;}
+.r2.lf{cursor:default;}.r2.lf:hover{background:transparent;}
+.d2{width:11px; height:11px; border-radius:50%; flex-shrink:0;}
+.n2{font-size:15.5px; color:var(--t1); font-weight:500;}
+.badge2{font-size:13px; font-weight:700; padding:5px 14px; border-radius:8px; white-space:nowrap;}
+.ch2{display:none; background:var(--s2);}.ch2.o{display:block;}
+.r3{padding:12px 22px 12px 68px; cursor:pointer; border-bottom:1px solid var(--b1);}
+.r3:last-child{border-bottom:none;}
+.r3.lf{cursor:default;}.r3.lf:hover{background:var(--s2);}
+.d3{width:9px; height:9px; border-radius:50%; flex-shrink:0;}
+.n3{font-size:14.5px; color:var(--t1);}
+.badge3{font-size:12.5px; font-weight:700; padding:4px 12px; border-radius:7px; white-space:nowrap;}
+.ch3{display:none; background:var(--bg2);}.ch3.o{display:block;}
+.r4{padding:11px 22px 11px 88px; border-bottom:1px solid var(--b1);}
+.r4:last-child{border-bottom:none;}
+.d4{width:7px; height:7px; border-radius:50%; flex-shrink:0;}
+.n4{font-size:14px; color:var(--t2);}
+.badge4{font-size:12px; font-weight:700; padding:4px 11px; border-radius:7px; white-space:nowrap;}
+.rel-list{display:flex; flex-direction:column; gap:6px;}
+.ri{background:var(--s1); border:1px solid var(--b1); border-radius:13px; padding:17px 22px; display:flex; align-items:center; gap:16px; box-shadow:0 1px 4px var(--shadow); transition:border-color .2s;}
+.ri:hover{border-color:var(--b2);}
+.ri-rank{font-size:14px; font-weight:700; color:var(--t3); min-width:28px; text-align:right; flex-shrink:0;}
+.ri-dot{width:12px; height:12px; border-radius:50%; flex-shrink:0;}
+.ri-info{flex:1; min-width:0;}
+.ri-name{font-size:16px; font-weight:700; color:var(--t1);}
+.ri-par{font-size:13px; color:var(--t2); margin-top:3px;}
+.ri-r{display:flex; flex-direction:column; align-items:flex-end; gap:4px; flex-shrink:0;}
+.ri-qty{font-size:18px; font-weight:800;}
+.ri-pct{font-size:13px; color:var(--t2);}
+.ri-badge{font-size:12px; font-weight:700; padding:4px 12px; border-radius:7px;}
+
+/* ── WIDGET RETRÁTIL RESPONSIVO ── */
+.widget-overlay {
+  position: fixed; bottom: 2rem; left: 50%; transform: translateX(-50%) translateY(20px);
+  background: var(--s1); border: 1px solid var(--b1); border-radius: 16px;
+  padding: 16px 24px; box-shadow: 0 10px 40px var(--shadow);
+  display: flex; align-items: center; gap: 24px; z-index: 150;
+  opacity: 0; pointer-events: none; transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.widget-overlay.visible { opacity: 1; pointer-events: auto; transform: translateX(-50%) translateY(0); }
+.widget-overlay.collapsed { padding: 10px 16px; gap: 12px; border-radius: 40px; }
+.widget-overlay.collapsed .wg-info, .widget-overlay.collapsed .wg-clear { display: none; }
+.widget-overlay.collapsed .wg-ring-container { width: 42px; height: 42px; margin: 0; }
+.widget-overlay.collapsed .wg-ring-pct { font-size: 11px; }
+.widget-overlay.collapsed .wg-ring-lbl { font-size: 7px; }
+
+.wg-info { display: flex; flex-direction: column; gap: 2px; }
+.wg-lbl { font-size: 13px; color: var(--t2); font-weight: 500; }
+.wg-val { font-size: 22px; font-weight: 800; color: var(--t1); letter-spacing: -0.02em; }
+.wg-sub { font-size: 12px; color: var(--t3); }
+.wg-clear { background: transparent; border: 1px solid var(--b2); color: var(--t2); padding: 8px 16px; border-radius: 8px; font-size: 13px; font-weight: 600; cursor: pointer; transition: all 0.2s; font-family: inherit; }
+.wg-clear:hover { border-color: var(--b3); color: var(--t1); background: var(--s2); }
+
+.wg-ring-container { position: relative; width: 64px; height: 64px; flex-shrink: 0; transition: all 0.3s; }
+.wg-ring-svg { transform: rotate(-90deg); width: 100%; height: 100%; }
+.wg-ring-bg { fill: none; stroke: var(--s3); stroke-width: 3.5; }
+.wg-ring-fill { fill: none; stroke: var(--acc); stroke-width: 3.5; stroke-linecap: round; transition: stroke-dasharray 0.4s ease-out; }
+.wg-ring-txt { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; }
+.wg-ring-pct { font-size: 14px; font-weight: 800; color: var(--t1); }
+.wg-ring-lbl { font-size: 9px; color: var(--t3); font-weight: 600; text-transform: uppercase; }
+
+/* Botão Toggle Widget */
+.wg-toggle { background: none; border: none; cursor: pointer; color: var(--t2); display: flex; align-items: center; justify-content: center; width: 32px; height: 32px; border-radius: 50%; transition: all 0.2s; flex-shrink: 0; }
+.wg-toggle:hover { background: var(--s2); color: var(--t1); }
+.wg-toggle svg { width: 18px; height: 18px; fill: currentColor; transition: transform 0.3s; }
+.widget-overlay.collapsed .wg-toggle svg { transform: rotate(180deg); }
+
+/* Ajustes Específicos para Desktop (Sidebar Lateral) */
+@media (min-width: 800px) {
+  .widget-overlay {
+    left: auto; right: 2.5rem; bottom: 2.5rem; transform: translateX(20px) translateY(0);
+    padding: 24px; border-radius: 20px;
   }
-
-  /* TEMA ESCURO (Chumbo/Ardósia, não preto) */
-  [data-theme="dark"] {
-    --bg: #1A1C23;           /* Chumbo escuro elegante */
-    --surface: #242731;      /* Ardósia um tom acima */
-    --surface2: #2F3340;     /* Hover */
-    --border: #3A3F4E;
-    --border2: #4A5163;
-    --text: #F3F4F6;         /* Cinza quase branco */
-    --muted: #9CA3AF;
-    --faint: #6B7280;
-    
-    /* Cores de Destaque no Modo Escuro */
-    --accent: #34D399;       /* Verde Claro */
-    --accent2: #38BDF8;      /* Azul Claro */
-    --accent3: #FBBF24;      /* Âmbar Claro */
-    --accent4: #F87171;      /* Vermelho Claro */
-    
-    /* Fundos de Destaque Translúcidos (Escuro) */
-    --accent-dim: rgba(52, 211, 153, 0.1);
-    --accent-dim-strong: rgba(52, 211, 153, 0.3);
-    --accent2-dim: rgba(56, 189, 248, 0.1);
-    --accent2-dim-strong: rgba(56, 189, 248, 0.3);
-    --accent3-dim: rgba(251, 191, 36, 0.1);
-    --accent3-dim-strong: rgba(251, 191, 36, 0.3);
-    --accent4-dim: rgba(248, 113, 113, 0.1);
-    --accent4-dim-strong: rgba(248, 113, 113, 0.3);
-
-    --shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
-  }
-
-  html { scroll-behavior: smooth; }
-
-  body {
-    font-family: var(--font);
-    background: var(--bg);
-    color: var(--text);
-    min-height: 100vh;
-    line-height: 1.6;
-    font-size: 18px; /* Aumentado a fonte base */
-    transition: background-color 0.3s ease, color 0.3s ease;
-  }
-
-  /* Header */
-  header {
-    padding: 3rem 2rem 2rem;
-    max-width: 900px;
-    margin: 0 auto;
-    border-bottom: 1px solid var(--border);
-    position: relative;
-  }
+  .widget-overlay.visible { transform: translateX(0) translateY(0); }
   
-  .header-top {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: .8rem;
-  }
-
-  .header-tag {
-    font-family: var(--mono);
-    font-size: 0.85rem; /* Maior */
-    font-weight: 700;
-    color: var(--accent);
-    letter-spacing: .12em;
-    text-transform: uppercase;
-  }
+  .widget-overlay:not(.collapsed) { flex-direction: column; width: 260px; align-items: center; }
+  .widget-overlay:not(.collapsed) .wg-ring-container { order: -1; width: 100px; height: 100px; margin-bottom: 12px; }
+  .widget-overlay:not(.collapsed) .wg-info { order: 0; text-align: center; margin-bottom: 16px; align-items: center; }
+  .widget-overlay:not(.collapsed) .wg-clear { order: 1; margin: 0; width: 100%; text-align: center; }
+  .widget-overlay:not(.collapsed) .wg-toggle { position: absolute; top: 16px; right: 16px; }
   
-  #theme-toggle {
-    background: var(--surface);
-    border: 1px solid var(--border);
-    color: var(--text);
-    cursor: pointer;
-    border-radius: 50%;
-    width: 44px;
-    height: 44px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    transition: all 0.2s;
-    box-shadow: var(--shadow);
-  }
-  
-  #theme-toggle:hover {
-    background: var(--surface2);
-    border-color: var(--border2);
-  }
+  /* Ajuste no modo pílula para desktop não esticar com "flex-direction: column" */
+  .widget-overlay.collapsed { flex-direction: row; align-items: center; }
+}
 
-  #theme-toggle svg { width: 22px; height: 22px; }
-  [data-theme="dark"] .icon-moon { display: none; }
-  [data-theme="light"] .icon-sun { display: none; }
-
-  header h1 {
-    font-size: clamp(2.2rem, 6vw, 3.5rem); /* Títulos muito mais visíveis */
-    font-weight: 800;
-    letter-spacing: -.03em;
-    line-height: 1.1;
-    color: var(--text);
-  }
-  header h1 span { color: var(--accent); }
-  header p {
-    margin-top: 1rem;
-    font-size: 1.15rem; /* Parágrafo maior */
-    color: var(--muted);
-    max-width: 600px;
-  }
-
-  /* Search */
-  .search-wrap {
-    max-width: 900px;
-    margin: 2rem auto 0;
-    padding: 0 2rem;
-  }
-  .search-box {
-    position: relative;
-    display: flex;
-    align-items: center;
-    box-shadow: var(--shadow);
-    border-radius: var(--radius);
-  }
-  .search-box svg {
-    position: absolute;
-    left: 18px;
-    color: var(--muted);
-    pointer-events: none;
-    width: 22px;
-    height: 22px;
-  }
-  #search {
-    width: 100%;
-    padding: 16px 18px 16px 52px; /* Maior área de clique */
-    background: var(--surface);
-    border: 2px solid var(--border);
-    border-radius: var(--radius);
-    color: var(--text);
-    font-family: var(--font);
-    font-size: 1.15rem; /* Fonte da busca maior */
-    outline: none;
-    transition: border-color .2s;
-  }
-  #search::placeholder { color: var(--muted); }
-  #search:focus { border-color: var(--accent); }
-  .search-count {
-    font-family: var(--mono);
-    font-size: 0.85rem;
-    color: var(--muted);
-    margin-top: .75rem;
-    height: 20px;
-  }
-
-  /* Tabs */
-  .tabs-wrap {
-    max-width: 900px;
-    margin: 1.5rem auto 0;
-    padding: 0 2rem;
-  }
-  .tabs {
-    display: flex;
-    gap: 8px;
-    flex-wrap: wrap;
-  }
-  .tab {
-    padding: 12px 22px; /* Botões maiores */
-    border-radius: 100px;
-    border: 1px solid var(--border);
-    background: var(--surface);
-    color: var(--muted);
-    font-family: var(--font);
-    font-size: 1.05rem; /* Letra da aba maior */
-    font-weight: 600;
-    cursor: pointer;
-    transition: all .2s ease;
-    box-shadow: var(--shadow);
-  }
-  .tab:hover { border-color: var(--border2); color: var(--text); background: var(--surface2); }
-  .tab.active { 
-    background: var(--text); 
-    color: var(--surface); 
-    border-color: var(--text); 
-  }
-
-  /* Main */
-  main {
-    max-width: 900px;
-    margin: 2.5rem auto;
-    padding: 0 2rem 5rem;
-  }
-
-  /* Section */
-  .section { display: none; animation: fadeIn 0.3s ease-in-out; }
-  .section.active { display: block; }
-  
-  @keyframes fadeIn {
-    from { opacity: 0; transform: translateY(5px); }
-    to { opacity: 1; transform: translateY(0); }
-  }
-
-  /* Group label */
-  .group-label {
-    font-family: var(--mono);
-    font-size: 0.9rem; /* Maior */
-    font-weight: 700;
-    letter-spacing: .12em;
-    text-transform: uppercase;
-    color: var(--faint);
-    margin: 3rem 0 1rem;
-    padding-bottom: .5rem;
-    border-bottom: 2px solid var(--border);
-  }
-
-  /* Card */
-  .card {
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: var(--radius-lg);
-    padding: 1.5rem; /* Mais respiro */
-    margin-bottom: 1rem;
-    display: flex;
-    justify-content: space-between;
-    align-items: flex-start;
-    gap: 1.5rem;
-    transition: all .2s ease;
-    box-shadow: var(--shadow);
-  }
-  .card:hover { border-color: var(--border2); transform: translateY(-2px); }
-  .card.highlight { border-color: var(--accent-dim-strong); background: var(--accent-dim); }
-
-  .card-body { flex: 1; min-width: 0; }
-  .card-art {
-    font-family: var(--mono);
-    font-size: 0.9rem; /* Maior */
-    font-weight: 700;
-    color: var(--muted);
-    letter-spacing: .05em;
-    margin-bottom: 8px;
-  }
-  .card-rule {
-    font-size: 1.25rem; /* MUITO maior e legível */
-    font-weight: 500;
-    color: var(--text);
-    line-height: 1.5;
-  }
-  .card-tip {
-    font-size: 1.05rem; /* Maior */
-    color: var(--text);
-    margin-top: 12px;
-    padding: 10px 14px;
-    background: var(--accent-dim);
-    border-left: 4px solid var(--accent);
-    border-radius: 4px 8px 8px 4px;
-    line-height: 1.5;
-  }
-
-  .card-num {
-    font-family: var(--mono);
-    font-size: 1.4rem; /* Maior destaque numérico */
-    font-weight: 700;
-    color: var(--accent);
-    white-space: nowrap;
-    text-align: right;
-    min-width: 110px;
-    padding-top: 4px;
-  }
-  .card-num.blue { color: var(--accent2); }
-  .card-num.orange { color: var(--accent3); }
-  .card-num.red { color: var(--accent4); }
-  .card-num.small { font-size: 1.15rem; }
-
-  /* Compare grid */
-  .compare-section {
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: var(--radius-lg);
-    padding: 1.75rem;
-    margin-bottom: 1rem;
-    box-shadow: var(--shadow);
-  }
-  .compare-title {
-    font-family: var(--mono);
-    font-size: 0.95rem; /* Maior */
-    font-weight: 700;
-    color: var(--accent);
-    letter-spacing: .08em;
-    text-transform: uppercase;
-    margin-bottom: 1.25rem;
-  }
-  .compare-grid {
-    display: grid;
-    gap: 16px;
-  }
-  .compare-grid.cols-2 { grid-template-columns: 1fr 1fr; }
-  .compare-grid.cols-3 { grid-template-columns: 1fr 1fr 1fr; }
-  .compare-item {
-    background: var(--surface2);
-    border: 1px solid var(--border);
-    border-radius: var(--radius);
-    padding: 1.25rem;
-  }
-  .compare-item.accent { border-color: var(--accent-dim-strong); background: var(--accent-dim); }
-  .compare-item.blue { border-color: var(--accent2-dim-strong); background: var(--accent2-dim); }
-  .compare-item.orange { border-color: var(--accent3-dim-strong); background: var(--accent3-dim); }
-  .compare-item.red { border-color: var(--accent4-dim-strong); background: var(--accent4-dim); }
-  .ci-num {
-    font-family: var(--mono);
-    font-size: 1.5rem; /* Maior */
-    font-weight: 700;
-    margin-bottom: 10px;
-  }
-  .ci-num.g { color: var(--accent); }
-  .ci-num.b { color: var(--accent2); }
-  .ci-num.o { color: var(--accent3); }
-  .ci-num.r { color: var(--accent4); }
-  .ci-text { font-size: 1.05rem; color: var(--text); line-height: 1.5; font-weight: 500;}
-  .compare-note {
-    font-size: 1.05rem;
-    color: var(--text);
-    margin-top: 1.25rem;
-    padding: 12px 16px;
-    background: var(--accent-dim);
-    border-left: 4px solid var(--accent);
-    border-radius: 4px 8px 8px 4px;
-    line-height: 1.5;
-  }
-
-  /* Search results */
-  #search-results { margin-top: .5rem; }
-  .no-results {
-    text-align: center;
-    padding: 4rem;
-    color: var(--muted);
-    font-size: 1.15rem;
-  }
-
-  /* Highlight match */
-  mark {
-    background: var(--accent-dim-strong);
-    color: var(--text);
-    border-radius: 4px;
-    padding: 2px 4px;
-    font-weight: bold;
-  }
-
-  /* Scrollbar */
-  ::-webkit-scrollbar { width: 8px; }
-  ::-webkit-scrollbar-track { background: var(--bg); }
-  ::-webkit-scrollbar-thumb { background: var(--border2); border-radius: 4px; }
-  ::-webkit-scrollbar-thumb:hover { background: var(--faint); }
-
-  @media (max-width: 768px) {
-    header, .search-wrap, .tabs-wrap, main { padding-left: 1.25rem; padding-right: 1.25rem; }
-    .compare-grid.cols-3 { grid-template-columns: 1fr; }
-    .compare-grid.cols-2 { grid-template-columns: 1fr; }
-    .card { flex-direction: column; gap: 0.5rem; }
-    .card-num { text-align: left; padding-top: 0; font-size: 1.25rem; }
-  }
+footer{max-width:1060px; margin:0 auto; padding:1.25rem 2rem 3rem; border-top:1px solid var(--b1); text-align:center;}
+#foot-stats{font-size:13.5px; color:var(--t2); font-weight:600; margin-bottom:8px; transition: color 0.3s;}
+.disclaimer{font-size:11.5px; color:var(--t3); line-height:1.5;}
+</style>
+<script src="https://cdn.jsdelivr.net/npm/sortablejs@latest/Sortable.min.js"></script>
+<style>
+  /* Estilo do item que fica "no fundo" enquanto você arrasta */
+  .sortable-ghost { opacity: 0.3 !important; background: var(--s2) !important; border: 2px dashed var(--acc) !important; transform: scale(0.98); }
+  /* Estilo da sombra do item que está na sua mão */
+  .sortable-drag { cursor: grabbing !important; box-shadow: 0 20px 40px rgba(0,0,0,0.3) !important; }
 </style>
 </head>
 <body>
 
-<header>
-  <div class="header-top">
-    <div class="header-tag">Código Civil — Livro II</div>
-    <button id="theme-toggle" aria-label="Alternar modo de cor">
-      <svg class="icon-sun" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-        <path stroke-linecap="round" stroke-linejoin="round" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" />
+<div id="login-screen">
+  <div class="login-box">
+    <button class="icon-btn" onclick="toggleTheme()" id="theme-btn-login" title="Alternar tema" style="position:absolute; top:20px; right:20px; width:34px; height:34px; font-size:15px;">🌙</button>
+    <div>
+      <h1>Calculadora de Questões</h1>
+      <p>Acesse seu ambiente privado de estudos.</p>
+    </div>
+    <button class="btn-google" id="btn-login" onclick="signIn()">
+      <svg viewBox="0 0 48 48"><path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"/><path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"/><path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z"/><path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.15 1.45-4.92 2.3-8.16 2.3-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"/><path fill="none" d="M0 0h48v48H0z"/></svg>
+      <span>Entrar com Google</span>
+      <div class="loader" id="login-loader"></div>
+    </button>
+    <div id="login-err"></div>
+  </div>
+</div>
+
+<div id="home-screen">
+  <div class="home-top">
+    <div class="home-head">
+      <h1 id="home-title">Calculadora de Questões</h1>
+      <p id="home-subtitle">Gerencie seus estudos organizados por pastas.</p>
+    </div>
+    <div class="user-controls">
+      <button class="logout-btn" onclick="signOut()">Sair</button>
+      <button class="icon-btn" onclick="toggleTheme()" id="theme-btn-home" title="Alternar tema">🌙</button>
+    </div>
+  </div>
+
+  <div class="saved-section">
+    <h2 id="section-title">Suas Pastas</h2>
+    <div class="saved-grid" id="saved-grid"></div>
+  </div>
+</div>
+
+<div class="modal-overlay" id="modal">
+  <div class="modal">
+    <div class="modal-head">
+      <h2 id="modal-title">Adicionar matéria</h2>
+      <button class="modal-close" onclick="closeModal()">×</button>
+    </div>
+    <div class="steps">
+      <div class="step"><div class="step-num">1</div><div class="step-text">Abra seu Excel, <strong>selecione todas as células</strong> com dados</div></div>
+      <div class="step"><div class="step-num">2</div><div class="step-text">Copie com <strong>Ctrl+C</strong> e cole abaixo com <strong>Ctrl+V</strong></div></div>
+      <div class="step"><div class="step-num">3</div><div class="step-text">Clique em <strong>Salvar matéria</strong> ou pressione <strong>Ctrl+Enter</strong></div></div>
+    </div>
+    <textarea id="paste-input" placeholder="Cole aqui os dados copiados do Excel..."></textarea>
+    <div class="modal-actions">
+      <button class="btn-primary" onclick="processPaste()">Salvar matéria</button>
+      <button class="btn-secondary" onclick="loadExample()">Carregar exemplo</button>
+      <span class="err-msg" id="err"></span>
+    </div>
+  </div>
+</div>
+
+<div id="app">
+  <header>
+    <div class="hdr">
+      <div class="hdr-nav">
+        <button class="nav-btn" id="nav-prev" onclick="navMateria(-1)" title="Matéria Anterior">←</button>
+        <span class="nav-title" id="nav-title">Nome da Matéria</span>
+        <button class="nav-btn" id="nav-next" onclick="navMateria(1)" title="Próxima Matéria">→</button>
+      </div>
+      
+      <div class="hdr-right">
+        <div class="qty-wrap">
+          <span class="qty-lbl">Total</span>
+          <div class="qty-ctrl">
+            <button class="step-btn" onclick="step(-10)">−</button>
+            <input type="number" id="total" value="400" min="1" max="99999"/>
+            <button class="step-btn" onclick="step(10)">+</button>
+          </div>
+          
+          <div class="seg-ctrl">
+            <button class="seg-btn" id="seg-est" onclick="setStrategy('estatistico')" title="Corta quem não atinge 1 questão inteira. Foco total.">Estatístico</button>
+            <button class="seg-btn active" id="seg-equ" onclick="setStrategy('equilibrado')" title="Garante mín. de 1 e ajusta a meta tirando dos maiores.">Equilibrado</button>
+            <button class="seg-btn" id="seg-exp" onclick="setStrategy('expansivo')" title="Garante mín. de 1 e SOMA as sobras ao Total.">Expansivo</button>
+          </div>
+
+          <button class="apply-btn saved" id="apply-btn" onclick="render()">Meta Definida</button>
+        </div>
+        <button class="back-btn" onclick="toggleNotes()" id="btn-notas" title="Anotações">📝 Notas</button>
+        <button class="icon-btn" onclick="toggleTheme()" id="theme-btn-app" title="Alternar tema">🌙</button>
+        <button class="back-btn" onclick="goBackToFolder()">Matérias</button>
+      </div>
+    </div>
+  </header>
+
+  <div id="notes-panel" style="display:none; max-width:1060px; margin: 0 auto; padding: 1.5rem 2rem 0;">
+    <div style="background:var(--s1); border:1px solid var(--b1); border-radius:14px; padding: 1.25rem; box-shadow: 0 4px 15px var(--shadow);">
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
+        <h3 style="font-size:15px; font-weight:700; color:var(--t1); display:flex; align-items:center; gap:6px;">Anotações da Matéria</h3>
+        
+        <div style="display:flex; align-items:center; gap:12px;">
+          <span id="notes-status" style="font-size:12px; font-weight:600; color:var(--t3);"></span>
+          <button class="btn-secondary" id="btn-save-notes" onclick="saveNotes()" style="padding:6px 14px; font-size:12.5px; border-radius:8px;">Salvar Anotação</button>
+        </div>
+
+      </div>
+      <textarea id="notes-textarea" oninput="markNotesUnsaved()" placeholder="Escreva seus resumos, macetes e observações aqui..." style="height:150px; background:var(--bg2); border:1px solid var(--b2); padding:14px; font-size:14px; border-radius:10px; line-height: 1.6;"></textarea>
+    </div>
+  </div>
+
+  <div class="toolbar" style="margin-top: 1rem;">
+    <div class="tbar">
+      <div style="display:flex;align-items:center;justify-content:center;gap:14px;flex-wrap:wrap;">
+        <div class="mode-tabs">
+          <button class="tab active" id="tm" onclick="setMode('mat')">Matéria e Assunto</button>
+          <button class="tab" id="tr" onclick="setMode('rel')">Relevância</button>
+        </div>
+        <div class="meta">
+          <span class="mi">Alocadas <span id="sa" style="transition: color 0.3s">—</span></span>
+          <span class="mi">Tópicos <span id="st">—</span></span>
+        </div>
+      </div>
+      <div class="legend">
+        <span class="leg"><span class="leg-dot" style="background:var(--red)"></span>Muito alta <span class="leg-val">&gt;5%</span></span>
+        <span class="leg"><span class="leg-dot" style="background:var(--orange)"></span>Alta <span class="leg-val">3–5%</span></span>
+        <span class="leg"><span class="leg-dot" style="background:var(--yellow)"></span>Média <span class="leg-val">1.5–3%</span></span>
+        <span class="leg"><span class="leg-dot" style="background:var(--blue)"></span>Baixa <span class="leg-val">0.7–1.5%</span></span>
+        <span class="leg"><span class="leg-dot" style="background:var(--green)"></span>Muito baixa <span class="leg-val">&lt;0.7%</span></span>
+      </div>
+    </div>
+  </div>
+
+  <main id="main"></main>
+  
+  <footer>
+    <div id="foot-stats"></div>
+    <div class="disclaimer">Ferramenta sem fins lucrativos. As informações sobre matérias, incluindo nomes dos assuntos e porcentagens, entre outras características, foram organizadas com base nas ferramentas de filtro da plataforma de questões Tec Concursos.</div>
+  </footer>
+
+  <div class="widget-overlay" id="widget-calc">
+    <div class="wg-info">
+      <div class="wg-lbl">Acumulado selecionado</div>
+      <div class="wg-val" id="wg-pct">0.00%</div>
+      <div class="wg-sub" id="wg-count">0 assuntos marcados</div>
+    </div>
+    <button class="wg-clear" onclick="clearSelection()">Limpar seleção</button>
+    <div class="wg-ring-container" onclick="toggleWidget()" style="cursor:pointer;" title="Expandir/Minimizar">
+      <svg class="wg-ring-svg" viewBox="0 0 36 36">
+        <path class="wg-ring-bg" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" />
+        <path class="wg-ring-fill" id="wg-ring-path" stroke-dasharray="0, 100" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" />
       </svg>
-      <svg class="icon-moon" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-        <path stroke-linecap="round" stroke-linejoin="round" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" />
-      </svg>
+      <div class="wg-ring-txt">
+        <span class="wg-ring-pct" id="wg-ring-pct-txt">0%</span>
+        <span class="wg-ring-lbl">acum.</span>
+      </div>
+    </div>
+    <button class="wg-toggle" onclick="toggleWidget()" title="Minimizar/Expandir">
+      <svg viewBox="0 0 24 24"><path d="M7.41 15.41L12 10.83l4.59 4.58L18 14l-6-6-6 6z"/></svg>
     </button>
   </div>
-  <h1>Direito de <span>Empresa</span></h1>
-  <p>Prazos, quóruns e números para concurso — arts. 966 a 1.195 do CC/2002</p>
-</header>
-
-<div class="search-wrap">
-  <div class="search-box">
-    <svg width="24" height="24" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
-      <circle cx="11" cy="11" r="8"/><path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-4.35-4.35"/>
-    </svg>
-    <input id="search" type="search" placeholder="Buscar por número, artigo ou palavra-chave..." oninput="buscar(this.value)">
-  </div>
-  <div class="search-count" id="search-count"></div>
 </div>
 
-<div class="tabs-wrap">
-  <div class="tabs">
-    <button class="tab active" onclick="showTab('prazos', this)">⏱ Prazos</button>
-    <button class="tab" onclick="showTab('quoruns', this)">🗳 Quóruns</button>
-    <button class="tab" onclick="showTab('numeros', this)">🔢 Quantidades</button>
-    <button class="tab" onclick="showTab('comparar', this)">⚖️ Comparar</button>
-    <button class="tab" onclick="showTab('busca', this)">🔍 Busca</button>
-  </div>
-</div>
-
-<main>
-
-<div id="tab-prazos" class="section active">
-
-  <div class="group-label">Prazos — em ordem dos artigos</div>
-
-  <div class="card">
-    <div class="card-body">
-      <div class="card-art">Art. 967 • Art. 969 • Art. 998</div>
-      <div class="card-rule">Sociedade deve requerer inscrição do contrato social após sua constituição</div>
-      <div class="card-tip">⚠️ Vale para Soc. Simples (Reg. Civil) e Soc. Empresária (Junta Comercial). Passado o prazo, o registro só produz efeitos a partir da data de concessão.</div>
-    </div>
-    <div class="card-num">30 dias</div>
-  </div>
-
-  <div class="card highlight">
-    <div class="card-body">
-      <div class="card-art">Art. 1.003 § único — Cessão de Quota</div>
-      <div class="card-rule">Responsabilidade solidária do cedente de quota com o cessionário após averbação</div>
-      <div class="card-tip">🔥 Muito cobrado! O cedente permanece solidariamente responsável por 2 anos.</div>
-    </div>
-    <div class="card-num red">2 anos</div>
-  </div>
-
-  <div class="card">
-    <div class="card-body">
-      <div class="card-art">Art. 1.004 — Sócio Remisso</div>
-      <div class="card-rule">Prazo após notificação para o sócio remisso integralizar sua quota</div>
-      <div class="card-tip">Se não pagar → maioria pode excluí-lo ou reduzir sua quota ao montante já realizado.</div>
-    </div>
-    <div class="card-num">30 dias</div>
-  </div>
-
-  <div class="card">
-    <div class="card-body">
-      <div class="card-art">Art. 1.026 § único</div>
-      <div class="card-rule">Prazo para depósito em juízo do valor da quota liquidada do devedor (credor particular de sócio)</div>
-    </div>
-    <div class="card-num orange">90 dias</div>
-  </div>
-
-  <div class="card">
-    <div class="card-body">
-      <div class="card-art">Art. 1.029</div>
-      <div class="card-rule">Antecedência mínima para notificação na retirada de sócio em sociedade de prazo indeterminado</div>
-    </div>
-    <div class="card-num orange">60 dias</div>
-  </div>
-
-  <div class="card">
-    <div class="card-body">
-      <div class="card-art">Art. 1.029 § único</div>
-      <div class="card-rule">Prazo para demais sócios optarem pela dissolução após notificação de retirada de sócio</div>
-    </div>
-    <div class="card-num">30 dias</div>
-  </div>
-
-  <div class="card">
-    <div class="card-body">
-      <div class="card-art">Art. 1.031 § 2º</div>
-      <div class="card-rule">Prazo para pagamento da quota liquidada ao sócio que se retirou, foi excluído ou faleceu</div>
-      <div class="card-tip">🔥 Muito cobrado! Lembre: 90 dias a partir da liquidação.</div>
-    </div>
-    <div class="card-num orange">90 dias</div>
-  </div>
-
-  <div class="card highlight">
-    <div class="card-body">
-      <div class="card-art">Art. 1.032 — Saída do Sócio</div>
-      <div class="card-rule">Responsabilidade do sócio que se retirou, foi excluído ou faleceu pelas obrigações anteriores</div>
-      <div class="card-tip">🔥 Muito cobrado! 2 anos a partir da averbação da resolução.</div>
-    </div>
-    <div class="card-num red">2 anos</div>
-  </div>
-
-  <div class="card">
-    <div class="card-body">
-      <div class="card-art">Art. 1.037 — MP</div>
-      <div class="card-rule">Prazo para o Ministério Público agir após receber comunicação da perda de autorização</div>
-      <div class="card-tip">Administradores têm 30 dias primeiro. Se omitirem, o MP tem 15 dias após a comunicação.</div>
-    </div>
-    <div class="card-num">15 dias</div>
-  </div>
-
-  <div class="card">
-    <div class="card-body">
-      <div class="card-art">Art. 1.043 § único, II (Nome Coletivo)</div>
-      <div class="card-rule">Prazo para credor particular opor-se à prorrogação contratual para liquidar a quota do sócio devedor</div>
-    </div>
-    <div class="card-num orange">90 dias</div>
-  </div>
-
-  <div class="card">
-    <div class="card-body">
-      <div class="card-art">Art. 1.051, II — Comandita Simples</div>
-      <div class="card-rule">Dissolução de pleno direito quando faltar uma das categorias de sócio por mais de</div>
-    </div>
-    <div class="card-num orange">180 dias</div>
-  </div>
-
-  <div class="card">
-    <div class="card-body">
-      <div class="card-art">Art. 1.055 § 1º — Estimação de Bens</div>
-      <div class="card-rule">Responsabilidade solidária de todos os sócios pela exata estimação de bens conferidos ao capital</div>
-    </div>
-    <div class="card-num red">5 anos</div>
-  </div>
-
-  <div class="card">
-    <div class="card-body">
-      <div class="card-art">Art. 1.062 § 1º</div>
-      <div class="card-rule">Prazo para o administrador designado em ato separado assinar o termo de posse</div>
-      <div class="card-tip">Se não assinar em 30 dias → designação torna-se sem efeito.</div>
-    </div>
-    <div class="card-num">30 dias</div>
-  </div>
-
-  <div class="card">
-    <div class="card-body">
-      <div class="card-art">Art. 1.062 § 2º</div>
-      <div class="card-rule">Prazo para o administrador requerer averbação de nomeação no registro após investidura</div>
-    </div>
-    <div class="card-num">10 dias</div>
-  </div>
-
-  <div class="card">
-    <div class="card-body">
-      <div class="card-art">Art. 1.063 § 2º</div>
-      <div class="card-rule">Prazo para averbar a cessação do cargo de administrador</div>
-    </div>
-    <div class="card-num">10 dias</div>
-  </div>
-
-  <div class="card">
-    <div class="card-body">
-      <div class="card-art">Art. 1.067 § único (Conselho Fiscal)</div>
-      <div class="card-rule">Prazo para membro do Conselho Fiscal assinar termo de posse após eleição</div>
-    </div>
-    <div class="card-num">30 dias</div>
-  </div>
-
-  <div class="card">
-    <div class="card-body">
-      <div class="card-art">Art. 1.073, I</div>
-      <div class="card-rule">Prazo para administradores convocarem assembleia após pedido dos sócios; se omitirem, o sócio pode convocar</div>
-    </div>
-    <div class="card-num">8 dias</div>
-  </div>
-
-  <div class="card">
-    <div class="card-body">
-      <div class="card-art">Art. 1.073, I — retardo de convocação</div>
-      <div class="card-rule">Retardo pelos administradores que autoriza convocação por sócio ou titulares de +1/5 do capital</div>
-    </div>
-    <div class="card-num orange">mais de 60 dias</div>
-  </div>
-
-  <div class="card">
-    <div class="card-body">
-      <div class="card-art">Art. 1.075 § 2º</div>
-      <div class="card-rule">Prazo para apresentar cópia da ata ao Registro após a assembleia</div>
-    </div>
-    <div class="card-num">20 dias</div>
-  </div>
-
-  <div class="card">
-    <div class="card-body">
-      <div class="card-art">Art. 1.077</div>
-      <div class="card-rule">Prazo para sócio dissidente se retirar após modificação do contrato, fusão ou incorporação</div>
-    </div>
-    <div class="card-num">30 dias</div>
-  </div>
-
-  <div class="card">
-    <div class="card-body">
-      <div class="card-art">Art. 1.078</div>
-      <div class="card-rule">Assembleia anual deve ocorrer nos primeiros meses após o término do exercício social</div>
-    </div>
-    <div class="card-num orange">4 meses</div>
-  </div>
-
-  <div class="card">
-    <div class="card-body">
-      <div class="card-art">Art. 1.078 § 4º</div>
-      <div class="card-rule">Prazo para anular aprovação de balanço (salvo erro, dolo ou simulação)</div>
-    </div>
-    <div class="card-num red">2 anos</div>
-  </div>
-
-  <div class="card">
-    <div class="card-body">
-      <div class="card-art">Art. 1.081 § 1º</div>
-      <div class="card-rule">Prazo de preferência dos sócios para participar do aumento de capital (após deliberação)</div>
-    </div>
-    <div class="card-num">30 dias</div>
-  </div>
-
-  <div class="card">
-    <div class="card-body">
-      <div class="card-art">Art. 1.084 § 1º — Redução de Capital</div>
-      <div class="card-rule">Prazo para credor quirografário opor-se à redução de capital (a partir da publicação da ata)</div>
-    </div>
-    <div class="card-num orange">90 dias</div>
-  </div>
-
-  <div class="card">
-    <div class="card-body">
-      <div class="card-art">Art. 1.091 § 3º — Comandita por Ações</div>
-      <div class="card-rule">Responsabilidade do diretor destituído ou exonerado pelas obrigações contraídas sob sua gestão</div>
-    </div>
-    <div class="card-num red">2 anos</div>
-  </div>
-
-  <div class="card">
-    <div class="card-body">
-      <div class="card-art">Art. 1.101 § único — Soc. Coligadas</div>
-      <div class="card-rule">Prazo para alienar ações/quotas em excesso ao limite (após aprovação do balanço)</div>
-    </div>
-    <div class="card-num orange">180 dias</div>
-  </div>
-
-  <div class="card">
-    <div class="card-body">
-      <div class="card-art">Art. 1.103, III (Liquidação)</div>
-      <div class="card-rule">Prazo para o liquidante elaborar inventário e balanço geral após sua investidura</div>
-    </div>
-    <div class="card-num">15 dias</div>
-  </div>
-
-  <div class="card">
-    <div class="card-body">
-      <div class="card-art">Art. 1.103, VI</div>
-      <div class="card-rule">Frequência mínima de convocação de assembleia pelo liquidante durante a liquidação</div>
-    </div>
-    <div class="card-num orange">6 meses</div>
-  </div>
-
-  <div class="card">
-    <div class="card-body">
-      <div class="card-art">Art. 1.109 § único</div>
-      <div class="card-rule">Prazo para dissidente propor ação após publicação da ata de encerramento da liquidação</div>
-    </div>
-    <div class="card-num">30 dias</div>
-  </div>
-
-  <div class="card">
-    <div class="card-body">
-      <div class="card-art">Art. 1.122</div>
-      <div class="card-rule">Prazo para credor anterior prejudicado anular atos de incorporação, fusão ou cisão</div>
-    </div>
-    <div class="card-num orange">90 dias</div>
-  </div>
-
-  <div class="card">
-    <div class="card-body">
-      <div class="card-art">Art. 1.124 — Soc. dependente de autorização</div>
-      <div class="card-rule">Prazo para entrar em funcionamento após autorização do Poder Executivo, sob pena de caducidade</div>
-    </div>
-    <div class="card-num red">12 meses</div>
-  </div>
-
-  <div class="card">
-    <div class="card-body">
-      <div class="card-art">Art. 1.131 (Soc. Nacional autorizada)</div>
-      <div class="card-rule">Prazo para publicar atos constitutivos no órgão oficial após expedição do decreto de autorização</div>
-    </div>
-    <div class="card-num">30 dias</div>
-  </div>
-
-  <div class="card">
-    <div class="card-body">
-      <div class="card-art">Art. 1.145</div>
-      <div class="card-rule">Prazo para credores manifestarem consentimento (expresso ou tácito) à alienação do estabelecimento</div>
-    </div>
-    <div class="card-num">30 dias</div>
-  </div>
-
-  <div class="card highlight">
-    <div class="card-body">
-      <div class="card-art">Art. 1.146 — Sucessão de Estabelecimento</div>
-      <div class="card-rule">Responsabilidade solidária do alienante com o adquirente do estabelecimento</div>
-      <div class="card-tip">Créditos <strong>vencidos</strong>: 1 ano da publicação. Créditos <strong>vincendos</strong>: 1 ano do vencimento.</div>
-    </div>
-    <div class="card-num red">1 ano</div>
-  </div>
-
-  <div class="card">
-    <div class="card-body">
-      <div class="card-art">Art. 1.147 — Não Concorrência</div>
-      <div class="card-rule">Prazo em que o alienante do estabelecimento não pode concorrer com o adquirente</div>
-      <div class="card-tip">No arrendamento ou usufruto, a proibição persiste durante todo o prazo do contrato.</div>
-    </div>
-    <div class="card-num red">5 anos</div>
-  </div>
-
-  <div class="card">
-    <div class="card-body">
-      <div class="card-art">Art. 1.148</div>
-      <div class="card-rule">Prazo para terceiros rescindirem contratos por justa causa após publicação da transferência do estabelecimento</div>
-    </div>
-    <div class="card-num orange">90 dias</div>
-  </div>
-
-  <div class="card">
-    <div class="card-body">
-      <div class="card-art">Art. 1.151 § 1º</div>
-      <div class="card-rule">Prazo para apresentar documentos ao registro após lavratura dos atos</div>
-    </div>
-    <div class="card-num">30 dias</div>
-  </div>
-
-  <div class="card">
-    <div class="card-body">
-      <div class="card-art">Art. 1.152 § 3º — 1ª convocação</div>
-      <div class="card-rule">Intervalo mínimo entre a 1ª publicação do anúncio de convocação e a data da assembleia</div>
-    </div>
-    <div class="card-num">8 dias</div>
-  </div>
-
-  <div class="card">
-    <div class="card-body">
-      <div class="card-art">Art. 1.152 § 3º — convocações posteriores</div>
-      <div class="card-rule">Intervalo mínimo para a 2ª convocação e seguintes</div>
-    </div>
-    <div class="card-num">5 dias</div>
-  </div>
-
-</div><div id="tab-quoruns" class="section">
-
-  <div class="group-label">Sociedade Limitada — Designação e destituição</div>
-
-  <div class="card">
-    <div class="card-body">
-      <div class="card-art">Art. 1.061 — capital NÃO integralizado</div>
-      <div class="card-rule">Designação de administrador não sócio quando o capital ainda não foi integralizado</div>
-      <div class="card-tip">🔥 Clássico! Antes de integralizar exige quórum mais rigoroso (2/3). Depois = maioria simples do capital.</div>
-    </div>
-    <div class="card-num blue">2/3</div>
-  </div>
-
-  <div class="card">
-    <div class="card-body">
-      <div class="card-art">Art. 1.061 — capital JÁ integralizado</div>
-      <div class="card-rule">Designação de administrador não sócio após integralização total do capital</div>
-    </div>
-    <div class="card-num blue">+ da metade</div>
-  </div>
-
-  <div class="card">
-    <div class="card-body">
-      <div class="card-art">Art. 1.063 § 1º</div>
-      <div class="card-rule">Destituição de sócio nomeado administrador no próprio contrato social</div>
-    </div>
-    <div class="card-num blue">+ da metade</div>
-  </div>
-
-  <div class="card">
-    <div class="card-body">
-      <div class="card-art">Art. 1.076, II</div>
-      <div class="card-rule">Designar admins (ato sep.), destituir admins, remuneração, modificação do contrato, incorporação, fusão, dissolução, concordata</div>
-      <div class="card-tip">Incisos II, III, IV, V, VI e VIII do art. 1.071.</div>
-    </div>
-    <div class="card-num blue small">+ da metade do capital</div>
-  </div>
-
-  <div class="card">
-    <div class="card-body">
-      <div class="card-art">Art. 1.076, III</div>
-      <div class="card-rule">Demais deliberações (lei ou contrato), se o contrato não exigir maioria mais elevada</div>
-    </div>
-    <div class="card-num blue small">maioria dos presentes</div>
-  </div>
-
-  <div class="card">
-    <div class="card-body">
-      <div class="card-art">Art. 1.085</div>
-      <div class="card-rule">Exclusão extrajudicial de sócio por justa causa (desde que prevista no contrato)</div>
-    </div>
-    <div class="card-num blue small">+ da metade do capital</div>
-  </div>
-
-  <div class="group-label">Sociedade Limitada — Instalação da assembleia</div>
-
-  <div class="card">
-    <div class="card-body">
-      <div class="card-art">Art. 1.074 — 1ª convocação</div>
-      <div class="card-rule">Quórum mínimo de instalação da assembleia na primeira convocação</div>
-    </div>
-    <div class="card-num blue">3/4 do capital</div>
-  </div>
-
-  <div class="card">
-    <div class="card-body">
-      <div class="card-art">Art. 1.074 — 2ª convocação</div>
-      <div class="card-rule">Quórum mínimo de instalação da assembleia na segunda convocação</div>
-    </div>
-    <div class="card-num blue small">qualquer número</div>
-  </div>
-
-  <div class="card">
-    <div class="card-body">
-      <div class="card-art">Art. 1.072 § 1º</div>
-      <div class="card-rule">Quando a assembleia é obrigatória (em vez de simples reunião) — quando o número de sócios superar</div>
-    </div>
-    <div class="card-num blue">10 sócios</div>
-  </div>
-
-  <div class="group-label">Sociedade Simples</div>
-
-  <div class="card">
-    <div class="card-body">
-      <div class="card-art">Art. 1.010</div>
-      <div class="card-rule">Deliberações ordinárias dos sócios — contados pelo valor das quotas de cada um</div>
-    </div>
-    <div class="card-num blue small">maioria de votos</div>
-  </div>
-
-  <div class="card">
-    <div class="card-body">
-      <div class="card-art">Art. 1.010 § 1º — maioria absoluta</div>
-      <div class="card-rule">Definição de maioria absoluta: votos correspondentes a mais de metade do capital</div>
-    </div>
-    <div class="card-num blue small">+ da metade do capital</div>
-  </div>
-
-  <div class="card">
-    <div class="card-body">
-      <div class="card-art">Art. 999</div>
-      <div class="card-rule">Modificações do contrato sobre matéria indicada no art. 997</div>
-    </div>
-    <div class="card-num blue small">unanimidade</div>
-  </div>
-
-  <div class="card">
-    <div class="card-body">
-      <div class="card-art">Art. 1.033, II e III</div>
-      <div class="card-rule">Dissolução por consenso / por deliberação em prazo indeterminado</div>
-    </div>
-    <div class="card-num blue small">unanimidade / maioria abs.</div>
-  </div>
-
-  <div class="group-label">Outros tipos societários e situações especiais</div>
-
-  <div class="card">
-    <div class="card-body">
-      <div class="card-art">Art. 1.091 § 2º — Comandita por Ações</div>
-      <div class="card-rule">Quórum para destituição de diretores</div>
-    </div>
-    <div class="card-num blue">2/3 do capital</div>
-  </div>
-
-  <div class="card">
-    <div class="card-body">
-      <div class="card-art">Art. 1.114 — Transformação</div>
-      <div class="card-rule">Transformação de tipo societário exige consentimento de todos os sócios, salvo previsão contratual</div>
-    </div>
-    <div class="card-num blue small">unanimidade</div>
-  </div>
-
-  <div class="card">
-    <div class="card-body">
-      <div class="card-art">Art. 1.127</div>
-      <div class="card-rule">Mudança de nacionalidade de sociedade brasileira</div>
-    </div>
-    <div class="card-num blue small">unanimidade</div>
-  </div>
-
-  <div class="card">
-    <div class="card-body">
-      <div class="card-art">Art. 1.066 § 2º — Conselho Fiscal</div>
-      <div class="card-rule">Sócios minoritários que têm direito de eleger separadamente 1 membro do Conselho Fiscal</div>
-    </div>
-    <div class="card-num blue small">pelo menos 1/5 (20%)</div>
-  </div>
-
-  <div class="card">
-    <div class="card-body">
-      <div class="card-art">Art. 1.057 — Cessão a estranhos</div>
-      <div class="card-rule">Quórum de bloqueio para opor-se à cessão de quota a pessoa estranha à sociedade</div>
-    </div>
-    <div class="card-num blue small">mais de 1/4 (25%)</div>
-  </div>
-
-  <div class="card">
-    <div class="card-body">
-      <div class="card-art">Art. 1.073, I — convocação por sócios</div>
-      <div class="card-rule">Fração mínima do capital social para requerer convocação de assembleia (não atendida em 8 dias)</div>
-    </div>
-    <div class="card-num blue small">mais de 1/5 (20%)</div>
-  </div>
-
-</div><div id="tab-numeros" class="section">
-
-  <div class="group-label">Composição de órgãos</div>
-
-  <div class="card">
-    <div class="card-body">
-      <div class="card-art">Art. 1.066</div>
-      <div class="card-rule">Número mínimo de membros do Conselho Fiscal (mais respectivos suplentes)</div>
-    </div>
-    <div class="card-num">3 membros</div>
-  </div>
-
-  <div class="card">
-    <div class="card-body">
-      <div class="card-art">Art. 1.072 § 1º</div>
-      <div class="card-rule">Número de sócios acima do qual a assembleia é obrigatória (em vez de reunião)</div>
-    </div>
-    <div class="card-num">mais de 10</div>
-  </div>
-
-  <div class="card">
-    <div class="card-body">
-      <div class="card-art">Art. 1.052 § 1º (desde 2019)</div>
-      <div class="card-rule">Número mínimo de sócios para constituir Sociedade Limitada — pode ser unipessoal</div>
-      <div class="card-tip">Novidade importante: desde a Lei 13.874/2019, a Ltda. pode ser constituída por 1 único sócio.</div>
-    </div>
-    <div class="card-num">1 sócio</div>
-  </div>
-
-  <div class="group-label">Percentuais e frações</div>
-
-  <div class="card">
-    <div class="card-body">
-      <div class="card-art">Art. 1.066 § 2º</div>
-      <div class="card-rule">Percentual mínimo do capital para sócios minoritários elegerem separadamente 1 membro do Conselho Fiscal</div>
-    </div>
-    <div class="card-num">1/5 = 20%</div>
-  </div>
-
-  <div class="card">
-    <div class="card-body">
-      <div class="card-art">Art. 1.073, I</div>
-      <div class="card-rule">Fração mínima do capital para requerer convocação de assembleia</div>
-    </div>
-    <div class="card-num">1/5 = 20%</div>
-  </div>
-
-  <div class="card">
-    <div class="card-body">
-      <div class="card-art">Art. 1.057</div>
-      <div class="card-rule">Fração que pode bloquear cessão de quota a pessoa estranha à sociedade</div>
-    </div>
-    <div class="card-num">1/4 = 25%</div>
-  </div>
-
-  <div class="card">
-    <div class="card-body">
-      <div class="card-art">Art. 1.074</div>
-      <div class="card-rule">Quórum de instalação da assembleia na 1ª convocação</div>
-    </div>
-    <div class="card-num">3/4 = 75%</div>
-  </div>
-
-  <div class="group-label">Gradação de participação — Sociedades Coligadas</div>
-
-  <div class="card">
-    <div class="card-body">
-      <div class="card-art">Art. 1.100</div>
-      <div class="card-rule">Simples participação: outra sociedade possui menos de 10% do capital com direito de voto</div>
-    </div>
-    <div class="card-num">menos de 10%</div>
-  </div>
-
-  <div class="card">
-    <div class="card-body">
-      <div class="card-art">Art. 1.099</div>
-      <div class="card-rule">Sociedade coligada/filiada: participação de 10% ou mais sem controlá-la</div>
-    </div>
-    <div class="card-num">10% ou mais</div>
-  </div>
-
-  <div class="card">
-    <div class="card-body">
-      <div class="card-art">Art. 1.098</div>
-      <div class="card-rule">Sociedade controlada: posse da maioria dos votos e poder de eleger a maioria dos administradores</div>
-    </div>
-    <div class="card-num small">maioria dos votos</div>
-  </div>
-
-  <div class="group-label">Limites financeiros e contábeis</div>
-
-  <div class="card">
-    <div class="card-body">
-      <div class="card-art">Art. 1.187 § único, I</div>
-      <div class="card-rule">Limite máximo para lançar despesas de instalação da sociedade no ativo (com amortização anual)</div>
-    </div>
-    <div class="card-num">10% do capital</div>
-  </div>
-
-  <div class="card">
-    <div class="card-body">
-      <div class="card-art">Art. 1.187 § único, II</div>
-      <div class="card-rule">Taxa máxima anual dos juros pagos a acionistas no período pré-operacional (S.A.)</div>
-    </div>
-    <div class="card-num">12% a.a.</div>
-  </div>
-
-  <div class="card">
-    <div class="card-body">
-      <div class="card-art">Art. 1.184 § 1º (Escrituração)</div>
-      <div class="card-rule">Limite máximo do período para lançamentos resumidos no livro Diário (escrituração por totais)</div>
-    </div>
-    <div class="card-num">30 dias</div>
-  </div>
-
-  <div class="group-label">Publicações e convocações</div>
-
-  <div class="card">
-    <div class="card-body">
-      <div class="card-art">Art. 1.152 § 3º</div>
-      <div class="card-rule">Número mínimo de publicações do anúncio de convocação de assembleia</div>
-    </div>
-    <div class="card-num">3 vezes</div>
-  </div>
-
-  <div class="card">
-    <div class="card-body">
-      <div class="card-art">Art. 1.103, VI (Liquidação)</div>
-      <div class="card-rule">Frequência mínima de convocação de assembleia pelo liquidante para apresentar relatório</div>
-    </div>
-    <div class="card-num">a cada 6 meses</div>
-  </div>
-
-</div><div id="tab-comparar" class="section">
-
-  <div class="group-label">Prazos de responsabilidade pós-evento</div>
-
-  <div class="compare-section">
-    <div class="compare-title">5 anos · 2 anos · 1 ano — não confunda</div>
-    <div class="compare-grid cols-3">
-      <div class="compare-item red">
-        <div class="ci-num r">5 anos</div>
-        <div class="ci-text">Responsabilidade pela <strong>estimação de bens</strong> conferidos ao capital — art. 1.055 § 1º<br><br>Proibição de <strong>não concorrência</strong> do alienante do estabelecimento — art. 1.147</div>
-      </div>
-      <div class="compare-item orange">
-        <div class="ci-num o">2 anos</div>
-        <div class="ci-text">Sócio que <strong>saiu</strong> responde por obrigações anteriores — art. 1.032<br><br><strong>Cedente</strong> de quota solidário com cessionário — art. 1.003 § único<br><br>Diretor destituído na <strong>Comandita por Ações</strong> — art. 1.091 § 3º<br><br>Prazo para <strong>anular aprovação de balanço</strong> — art. 1.078 § 4º</div>
-      </div>
-      <div class="compare-item accent">
-        <div class="ci-num g">1 ano</div>
-        <div class="ci-text">Responsabilidade solidária do <strong>alienante do estabelecimento</strong> com o adquirente — art. 1.146<br><br>(créditos vencidos: 1 ano da publicação; vincendos: 1 ano do vencimento)</div>
-      </div>
-    </div>
-    <div class="compare-note">Macete: quanto mais grave o vínculo, maior o prazo. Alienar o estabelecimento (1 ano) &lt; sair da sociedade ou ceder quota (2 anos) &lt; conferir bens ou impedir concorrência (5 anos).</div>
-  </div>
-
-  <div class="group-label">Quórum para administrador não sócio (Art. 1.061)</div>
-
-  <div class="compare-section">
-    <div class="compare-title">O que muda com a integralização do capital</div>
-    <div class="compare-grid cols-2">
-      <div class="compare-item orange">
-        <div class="ci-num o">2/3</div>
-        <div class="ci-text">Capital <strong>NÃO</strong> integralizado → exige quórum qualificado de dois terços</div>
-      </div>
-      <div class="compare-item accent">
-        <div class="ci-num g">+ da metade</div>
-        <div class="ci-text">Capital <strong>JÁ</strong> integralizado → basta maioria simples do capital social</div>
-      </div>
-    </div>
-    <div class="compare-note">Lógica: enquanto o capital não está integralizado, os sócios assumem maior risco → mais difícil trazer alguém de fora para administrar. Após a integralização, o risco diminui, o quórum também.</div>
-  </div>
-
-  <div class="group-label">Prazos de 30 dias vs 90 dias</div>
-
-  <div class="compare-section">
-    <div class="compare-title">Cuidado: prazo de 30 dias é para agir; 90 dias é para receber/opor-se</div>
-    <div class="compare-grid cols-2">
-      <div class="compare-item accent">
-        <div class="ci-num g">30 dias</div>
-        <div class="ci-text">Requerer inscrição do contrato social (art. 998)<br>Sócio remisso integralizar quota (art. 1.004)<br>Preferência no aumento de capital (art. 1.081 § 1º)<br>Retirada após modificação/fusão/incorporação (art. 1.077)<br>Termo de posse do administrador (art. 1.062 § 1º)</div>
-      </div>
-      <div class="compare-item blue">
-        <div class="ci-num b">90 dias</div>
-        <div class="ci-text">Pagamento da quota liquidada (art. 1.031 § 2º)<br>Depósito em juízo do valor da quota (art. 1.026 § único)<br>Credor opor-se à redução de capital (art. 1.084 § 1º)<br>Credor anular incorporação/fusão/cisão (art. 1.122)<br>Terceiros rescindirem contratos (art. 1.148)</div>
-      </div>
-    </div>
-  </div>
-
-  <div class="group-label">Gradação de participação societária</div>
-
-  <div class="compare-section">
-    <div class="compare-title">Arts. 1.098, 1.099 e 1.100 — os três graus</div>
-    <div class="compare-grid cols-3">
-      <div class="compare-item accent">
-        <div class="ci-num g" style="font-size:1.15rem">menos de 10%</div>
-        <div class="ci-text"><strong>Simples participação</strong><br>art. 1.100</div>
-      </div>
-      <div class="compare-item orange">
-        <div class="ci-num o" style="font-size:1.15rem">10% ou mais</div>
-        <div class="ci-text"><strong>Coligada / filiada</strong><br>art. 1.099<br>sem controlar</div>
-      </div>
-      <div class="compare-item red">
-        <div class="ci-num r" style="font-size:1.15rem">maioria dos votos</div>
-        <div class="ci-text"><strong>Controlada</strong><br>art. 1.098<br>+ poder de eleger maioria dos admins</div>
-      </div>
-    </div>
-  </div>
-
-  <div class="group-label">Convocação de assembleia — intervalos de publicação</div>
-
-  <div class="compare-section">
-    <div class="compare-title">Art. 1.152 § 3º — publicação mínima: 3 vezes</div>
-    <div class="compare-grid cols-2">
-      <div class="compare-item accent">
-        <div class="ci-num g">8 dias</div>
-        <div class="ci-text"><strong>1ª convocação</strong> — intervalo mínimo entre a 1ª publicação e a data da assembleia</div>
-      </div>
-      <div class="compare-item blue">
-        <div class="ci-num b">5 dias</div>
-        <div class="ci-text"><strong>Convocações posteriores</strong> — intervalo mínimo para a 2ª convocação e seguintes</div>
-      </div>
-    </div>
-  </div>
-
-  <div class="group-label">Frações de capital que aparecem em prova</div>
-
-  <div class="compare-section">
-    <div class="compare-title">Quóruns e percentuais — da menor para a maior fração</div>
-    <div class="compare-grid cols-2">
-      <div class="compare-item accent">
-        <div class="ci-num g">1/5 = 20%</div>
-        <div class="ci-text">Sócios minoritários para eleger membro do Conselho Fiscal (art. 1.066 § 2º)<br>Titulares para requerer convocação de assembleia (art. 1.073, I)</div>
-      </div>
-      <div class="compare-item blue">
-        <div class="ci-num b">1/4 = 25%</div>
-        <div class="ci-text">Quórum de <strong>bloqueio</strong>: mais de 1/4 do capital pode opor-se à cessão de quota a estranho (art. 1.057)</div>
-      </div>
-      <div class="compare-item orange">
-        <div class="ci-num o">+ da metade = 50%+</div>
-        <div class="ci-text">Principal quórum deliberativo da Ltda. (art. 1.076, II): designar/destituir admins, modificar contrato, incorporar, fundir, dissolver</div>
-      </div>
-      <div class="compare-item red">
-        <div class="ci-num r">3/4 = 75%</div>
-        <div class="ci-text">Quórum de <strong>instalação</strong> da assembleia na 1ª convocação (art. 1.074). Na 2ª convocação: qualquer número.</div>
-      </div>
-    </div>
-    <div class="compare-note">Macete crescente: 20% (minoria Conselho) → 25%+ (bloquear cessão) → 50%+ (deliberar) → 67% (admin não sócio sem capital int.) → 75% (instalar assembleia 1ª conv.)</div>
-  </div>
-
-</div><div id="tab-busca" class="section">
-  <p style="font-size:1.05rem;color:var(--muted);margin-bottom:1.5rem">Use a barra de pesquisa no topo da página para buscar em todos os itens simultaneamente.</p>
-  <div id="search-results-tab"></div>
-</div>
-
-</main>
+<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
 
 <script>
-// --- Lógica de Tema ---
-const toggleBtn = document.getElementById('theme-toggle');
-const html = document.documentElement;
+/* ══════════════════════════════════════════
+   CONFIGURAÇÃO DE SEGURANÇA
+══════════════════════════════════════════ */
+var MEU_EMAIL_PERMITIDO = "joaopaulozx123@gmail.com"; 
 
-const savedTheme = localStorage.getItem('theme');
-if (savedTheme) {
-  html.setAttribute('data-theme', savedTheme);
-} else if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
-  html.setAttribute('data-theme', 'dark');
+/* ══════════════════════════════════════════
+   STATE DA APLICAÇÃO
+══════════════════════════════════════════ */
+var PASTAS = [];
+var MATERIAS = [];      
+var ACTIVE_ID = null;        
+var ACTIVE_FOLDER_ID = null; 
+var EDITING_ID = null;
+var CURRENT_VIEW = 'folders'; 
+var TREE = [], LEAVES = [], MODE = 'mat', OS = {}, UID = 0;
+var THEME = localStorage.getItem('theme_calc') || 'dark';
+var CURRENT_USER = null;
+var IS_FIRST_LOAD = true;
+
+/* ══════════════════════════════════════════
+   FIREBASE CONFIG
+══════════════════════════════════════════ */
+var firebaseConfig = {
+  apiKey: "AIzaSyCGENfsVGYCRkB1GVshP1F_FCtgEC6Y6lo",
+  authDomain: "calculadora-de-questoes.firebaseapp.com",
+  projectId: "calculadora-de-questoes",
+  storageBucket: "calculadora-de-questoes.firebasestorage.app",
+  messagingSenderId: "599004475567",
+  appId: "1:599004475567:web:688425701e787696a8e45a"
+};
+
+firebase.initializeApp(firebaseConfig);
+var database = firebase.database();
+var auth = firebase.auth();
+
+/* ══════════════════════════════════════════
+   PERSISTÊNCIA DE SESSÃO (DEEP LINKING)
+══════════════════════════════════════════ */
+function saveSession() {
+  if(!CURRENT_USER) return;
+  var s = { v: CURRENT_VIEW, f: ACTIVE_FOLDER_ID, m: ACTIVE_ID };
+  localStorage.setItem('calc_sess_' + CURRENT_USER.uid, JSON.stringify(s));
 }
 
-toggleBtn.addEventListener('click', () => {
-  const currentTheme = html.getAttribute('data-theme');
-  const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
-  html.setAttribute('data-theme', newTheme);
-  localStorage.setItem('theme', newTheme);
-});
-
-// --- Lógica de Dados ---
-const allData = [
-  {num:"30 dias", art:"Art. 998", rule:"Prazo para requerer inscrição do contrato social após constituição", tip:""},
-  {num:"30 dias", art:"Art. 1.004", rule:"Prazo para sócio remisso integralizar quota após notificação", tip:"Se não pagar em 30 dias, a maioria pode excluí-lo ou reduzir sua quota."},
-  {num:"30 dias", art:"Art. 1.029 § único", rule:"Prazo para demais sócios optarem pela dissolução após notificação de retirada de sócio", tip:""},
-  {num:"30 dias", art:"Art. 1.077", rule:"Prazo para sócio dissidente se retirar após modificação, fusão ou incorporação", tip:""},
-  {num:"30 dias", art:"Art. 1.081 § 1º", rule:"Prazo de preferência dos sócios para participar do aumento de capital após deliberação", tip:""},
-  {num:"30 dias", art:"Art. 1.062 § 1º", rule:"Prazo para o administrador designado em ato separado assinar o termo de posse", tip:"Se não assinar em 30 dias, a designação torna-se sem efeito."},
-  {num:"30 dias", art:"Art. 1.067 § único", rule:"Prazo para membro do Conselho Fiscal assinar termo de posse após eleição", tip:""},
-  {num:"30 dias", art:"Art. 1.145", rule:"Prazo para credores manifestarem consentimento à alienação do estabelecimento", tip:""},
-  {num:"30 dias", art:"Art. 1.109 § único", rule:"Prazo para dissidente propor ação após publicação da ata de encerramento da liquidação", tip:""},
-  {num:"30 dias", art:"Art. 1.131", rule:"Prazo para publicar atos constitutivos no órgão oficial após decreto de autorização", tip:""},
-  {num:"30 dias", art:"Art. 1.151 § 1º", rule:"Prazo para apresentar documentos ao registro após lavratura dos atos", tip:""},
-  {num:"20 dias", art:"Art. 1.075 § 2º", rule:"Prazo para apresentar cópia da ata ao Registro após a assembleia", tip:""},
-  {num:"15 dias", art:"Art. 1.103, III", rule:"Prazo para o liquidante elaborar inventário e balanço geral após investidura", tip:""},
-  {num:"15 dias", art:"Art. 1.037 — MP", rule:"Prazo para o Ministério Público agir após receber comunicação da perda de autorização", tip:""},
-  {num:"10 dias", art:"Art. 1.062 § 2º", rule:"Prazo para administrador requerer averbação de nomeação no registro após investidura", tip:""},
-  {num:"10 dias", art:"Art. 1.063 § 2º", rule:"Prazo para averbar a cessação do cargo de administrador", tip:""},
-  {num:"8 dias", art:"Art. 1.073, I", rule:"Prazo para administradores convocarem assembleia após pedido dos sócios", tip:""},
-  {num:"8 dias", art:"Art. 1.152 § 3º", rule:"Intervalo mínimo entre 1ª publicação de convocação e a data da assembleia (1ª conv.)", tip:""},
-  {num:"5 dias", art:"Art. 1.152 § 3º", rule:"Intervalo mínimo para a 2ª convocação e posteriores", tip:""},
-  {num:"60 dias", art:"Art. 1.029", rule:"Antecedência mínima para notificação de retirada de sócio em sociedade de prazo indeterminado", tip:""},
-  {num:"90 dias", art:"Art. 1.031 § 2º", rule:"Prazo para pagamento da quota liquidada ao sócio que se retirou, foi excluído ou faleceu", tip:"🔥 Muito cobrado! 90 dias a partir da liquidação."},
-  {num:"90 dias", art:"Art. 1.026 § único", rule:"Prazo para depósito em juízo do valor da quota liquidada (credor particular de sócio)", tip:""},
-  {num:"90 dias", art:"Art. 1.084 § 1º", rule:"Prazo para credor quirografário opor-se à redução de capital", tip:""},
-  {num:"90 dias", art:"Art. 1.122", rule:"Prazo para credor prejudicado anular incorporação, fusão ou cisão", tip:""},
-  {num:"90 dias", art:"Art. 1.148", rule:"Prazo para terceiros rescindirem contratos após transferência do estabelecimento", tip:""},
-  {num:"90 dias", art:"Art. 1.043 § único, II", rule:"Prazo para credor particular opor-se à prorrogação contratual na Soc. em Nome Coletivo", tip:""},
-  {num:"180 dias", art:"Art. 1.051, II", rule:"Dissolução de pleno direito na Comandita Simples quando faltar uma das categorias de sócios", tip:""},
-  {num:"180 dias", art:"Art. 1.101 § único", rule:"Prazo para alienar ações/quotas em excesso ao limite (sociedades coligadas)", tip:""},
-  {num:"4 meses", art:"Art. 1.078", rule:"Prazo para realização da assembleia anual após término do exercício social", tip:""},
-  {num:"6 meses", art:"Art. 1.103, VI", rule:"Frequência mínima de convocação de assembleia pelo liquidante", tip:""},
-  {num:"1 ano", art:"Art. 1.146", rule:"Responsabilidade solidária do alienante do estabelecimento com o adquirente", tip:"Créditos vencidos: 1 ano da publicação. Vincendos: 1 ano do vencimento."},
-  {num:"2 anos", art:"Art. 1.003 § único", rule:"Responsabilidade solidária do cedente de quota com o cessionário após averbação", tip:"🔥 Muito cobrado!"},
-  {num:"2 anos", art:"Art. 1.032", rule:"Responsabilidade do sócio que saiu pelas obrigações anteriores (retirada, exclusão ou morte)", tip:"🔥 Muito cobrado! 2 anos a partir da averbação da resolução."},
-  {num:"2 anos", art:"Art. 1.078 § 4º", rule:"Prazo para anular aprovação do balanço (salvo erro, dolo ou simulação)", tip:""},
-  {num:"2 anos", art:"Art. 1.091 § 3º", rule:"Responsabilidade do diretor destituído na Comandita por Ações", tip:""},
-  {num:"5 anos", art:"Art. 1.055 § 1º", rule:"Responsabilidade solidária dos sócios pela estimação dos bens conferidos ao capital", tip:""},
-  {num:"5 anos", art:"Art. 1.147", rule:"Prazo de não concorrência do alienante do estabelecimento com o adquirente", tip:"No arrendamento ou usufruto, persiste durante todo o prazo do contrato."},
-  {num:"12 meses", art:"Art. 1.124", rule:"Prazo para entrar em funcionamento após autorização do Poder Executivo", tip:"Sob pena de caducidade da autorização."},
-  {num:"2/3", art:"Art. 1.061", rule:"Quórum para designar administrador não sócio — capital não integralizado", tip:"🔥 Muito cobrado!"},
-  {num:"+ da metade", art:"Art. 1.061", rule:"Quórum para designar administrador não sócio — capital já integralizado", tip:""},
-  {num:"3/4 do capital", art:"Art. 1.074", rule:"Quórum de instalação da assembleia na 1ª convocação", tip:""},
-  {num:"qualquer número", art:"Art. 1.074", rule:"Quórum de instalação da assembleia na 2ª convocação", tip:""},
-  {num:"mais de 10 sócios", art:"Art. 1.072 § 1º", rule:"Quando a assembleia é obrigatória em vez de reunião", tip:""},
-  {num:"3 membros", art:"Art. 1.066", rule:"Número mínimo de membros do Conselho Fiscal", tip:""},
-  {num:"1/5 = 20%", art:"Art. 1.066 § 2º", rule:"Percentual mínimo para sócios minoritários elegerem membro do Conselho Fiscal", tip:""},
-  {num:"mais de 1/4 = 25%", art:"Art. 1.057", rule:"Quórum para bloquear cessão de quota a pessoa estranha à sociedade", tip:""},
-  {num:"10% ou mais", art:"Art. 1.099", rule:"Percentual que caracteriza sociedade coligada ou filiada", tip:""},
-  {num:"menos de 10%", art:"Art. 1.100", rule:"Percentual abaixo do qual a participação é de simples participação", tip:""},
-  {num:"10% do capital", art:"Art. 1.187 § único, I", rule:"Limite máximo para despesas de instalação no ativo da sociedade", tip:""},
-  {num:"12% ao ano", art:"Art. 1.187 § único, II", rule:"Taxa máxima de juros pagos a acionistas no período pré-operacional (S.A.)", tip:""},
-  {num:"2/3 do capital", art:"Art. 1.091 § 2º", rule:"Quórum para destituição de diretores na Comandita por Ações", tip:""},
-  {num:"unanimidade", art:"Art. 999", rule:"Modificações do contrato social sobre matéria do art. 997 (Soc. Simples)", tip:""},
-  {num:"unanimidade", art:"Art. 1.114", rule:"Transformação de tipo societário (salvo previsão contratual)", tip:""},
-  {num:"unanimidade", art:"Art. 1.127", rule:"Mudança de nacionalidade de sociedade brasileira", tip:""},
-  {num:"3 vezes", art:"Art. 1.152 § 3º", rule:"Número mínimo de publicações do anúncio de convocação de assembleia", tip:""},
-  {num:"1 sócio", art:"Art. 1.052 § 1º", rule:"Número mínimo de sócios na Sociedade Limitada (pode ser unipessoal)", tip:"Desde a Lei 13.874/2019."},
-];
-
-function hl(text, q) {
-  if (!q) return text;
-  const re = new RegExp('(' + q.replace(/[.*+?^${}()|[\]\\]/g, '\\$&') + ')', 'gi');
-  return text.replace(re, '<mark>$1</mark>');
+function restoreSession() {
+  if(!CURRENT_USER) return renderHome();
+  var s = localStorage.getItem('calc_sess_' + CURRENT_USER.uid);
+  if(s) {
+    try {
+      var sess = JSON.parse(s);
+      if(sess.v === 'app' && sess.m && MATERIAS.find(function(x) { return x.id === sess.m; })) {
+        ACTIVE_FOLDER_ID = sess.f; 
+        openMateria(sess.m);
+        return;
+      }
+      if(sess.v === 'materias' && sess.f && PASTAS.find(function(x) { return x.id === sess.f; })) {
+        openFolder(sess.f);
+        return;
+      }
+    } catch(e) {}
+  }
+  renderHome();
 }
 
-let searchTimeout;
-function buscar(q) {
-  clearTimeout(searchTimeout);
-  searchTimeout = setTimeout(() => _buscar(q), 120);
-}
-
-function _buscar(q) {
-  const count = document.getElementById('search-count');
-  const resultsTab = document.getElementById('search-results-tab');
+/* ══════════════════════════════════════════
+   AUTENTICAÇÃO E CARREGAMENTO
+══════════════════════════════════════════ */
+auth.onAuthStateChanged(function(user) {
+  var loader = document.getElementById('login-loader');
+  var btnSpan = document.querySelector('#btn-login span');
   
-  document.querySelectorAll('.card').forEach(c => c.classList.remove('highlight'));
-
-  if (!q || q.trim().length < 2) {
-    count.textContent = '';
-    resultsTab.innerHTML = '';
-    return;
-  }
-
-  const lq = q.toLowerCase();
-  const matches = allData.filter(d =>
-    d.num.toLowerCase().includes(lq) ||
-    d.art.toLowerCase().includes(lq) ||
-    d.rule.toLowerCase().includes(lq) ||
-    d.tip.toLowerCase().includes(lq)
-  );
-
-  count.textContent = matches.length + ' resultado' + (matches.length !== 1 ? 's' : '');
-
-  if (matches.length === 0) {
-    resultsTab.innerHTML = '<div class="no-results">Nenhum resultado encontrado para a busca.</div>';
-    return;
-  }
-
-  resultsTab.innerHTML = matches.map(d => `
-    <div class="card">
-      <div class="card-body">
-        <div class="card-art">${hl(d.art, q)}</div>
-        <div class="card-rule">${hl(d.rule, q)}</div>
-        ${d.tip ? '<div class="card-tip">' + hl(d.tip, q) + '</div>' : ''}
-      </div>
-      <div class="card-num">${hl(d.num, q)}</div>
-    </div>
-  `).join('');
-}
-
-function showTab(name, btn) {
-  document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
-  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
-  document.getElementById('tab-' + name).classList.add('active');
-  btn.classList.add('active');
-  if (name === 'busca') {
-    const q = document.getElementById('search').value;
-    if (q.length >= 2) _buscar(q);
-  }
-}
-
-document.getElementById('search').addEventListener('input', function() {
-  const activeTab = document.querySelector('.section.active');
-  if (activeTab && activeTab.id === 'tab-busca') {
-    _buscar(this.value);
+  if (user) {
+    if (user.email === MEU_EMAIL_PERMITIDO) {
+      CURRENT_USER = user;
+      document.getElementById('login-screen').style.display = 'none';
+      document.getElementById('home-screen').style.display = 'flex';
+      document.getElementById('app').style.display = 'none';
+      loadFromLS(); 
+    } else {
+      auth.signOut().then(function() {
+        showLoginError("Acesso Negado: Este não é o e-mail do administrador.");
+        loader.style.display = 'none';
+        btnSpan.style.display = 'block';
+      });
+    }
+  } else {
+    CURRENT_USER = null;
+    PASTAS = [];
+    MATERIAS = [];
+    IS_FIRST_LOAD = true;
+    document.getElementById('login-screen').style.display = 'flex';
+    document.getElementById('home-screen').style.display = 'none';
+    document.getElementById('app').style.display = 'none';
+    loader.style.display = 'none';
+    btnSpan.style.display = 'block';
   }
 });
+
+function signIn() {
+  document.getElementById('login-err').style.display = 'none';
+  document.getElementById('login-loader').style.display = 'block';
+  document.querySelector('#btn-login span').style.display = 'none';
+  var provider = new firebase.auth.GoogleAuthProvider();
+  auth.signInWithPopup(provider).catch(function(error) {
+    showLoginError("Erro no login: " + error.message);
+    document.getElementById('login-loader').style.display = 'none';
+    document.querySelector('#btn-login span').style.display = 'block';
+  });
+}
+function signOut() { auth.signOut(); }
+function showLoginError(msg) {
+  var errEl = document.getElementById('login-err');
+  errEl.textContent = msg; errEl.style.display = 'block';
+}
+
+function saveToLS(){
+  if(!CURRENT_USER) return;
+  try{
+    var dataM = MATERIAS.map(function(m){
+      return {
+        id:m.id, name:m.name, rawText:m.rawText, 
+        sel:m.sel||[], totalQ: m.totalQ||400, 
+        notas: m.notas||"", strategy: m.strategy||'equilibrado',
+        folderId: m.folderId, os: (ACTIVE_ID === m.id ? OS : (m.os || {}))
+      };
+    });
+    database.ref('usuarios/' + CURRENT_USER.uid + '/meus_estudos/').set({
+      pastas: PASTAS,
+      materias: dataM
+    });
+  }catch(e){ console.error("Erro ao salvar:", e); }
+}
+
+function loadFromLS(){
+  if(!CURRENT_USER) return;
+  database.ref('usuarios/' + CURRENT_USER.uid + '/meus_estudos/').on('value', function(snapshot) {
+    var data = snapshot.val() || {};
+    
+    // 1. Blindagem de Dados: Garante que PASTAS seja um array limpo
+    var rawPastas = data.pastas ? (Array.isArray(data.pastas) ? data.pastas : Object.values(data.pastas)) : [];
+    PASTAS = rawPastas.filter(function(p) { return p !== null && typeof p === 'object'; });
+
+    // 2. Blindagem de Dados: Garante que MATERIAS seja um array limpo
+    var rawMaterias = data.materias ? (Array.isArray(data.materias) ? data.materias : Object.values(data.materias)) : [];
+    var matArray = rawMaterias.filter(function(m) { return m !== null && typeof m === 'object'; });
+
+    MATERIAS = [];
+    var needMigration = false;
+    var defaultFolderId = 'p_default_sefaz';
+
+    if(matArray.length){
+      matArray.forEach(function(m){
+        try{
+          if(!m.folderId) { 
+            m.folderId = defaultFolderId; 
+            needMigration = true; 
+          }
+          var parsed = parseText(m.rawText);
+          var str = m.strategy ? m.strategy : (m.minOne === false ? 'estatistico' : 'equilibrado');
+          MATERIAS.push({
+            id:m.id, name:m.name, rawText:m.rawText, tree:parsed.tree, 
+            sel:m.sel||[], totalQ: m.totalQ||400, notas: m.notas||"", strategy: str,
+            folderId: m.folderId, os: m.os || {}
+          });
+        }catch(e){ console.error("Erro ao processar matéria salva:", e); }
+      });
+    }
+    
+    // Auto-Cria a pasta Sefaz DF se houver matérias órfãs e salva estrutura correta
+    if(needMigration) {
+      var found = PASTAS.find(function(p) { return p.id === defaultFolderId; });
+      if(!found) {
+        PASTAS.push({ id: defaultFolderId, name: 'Sefaz DF' });
+      }
+      saveToLS();
+    }
+
+    if(IS_FIRST_LOAD) {
+      IS_FIRST_LOAD = false;
+      restoreSession();
+    } else {
+      if(CURRENT_VIEW === 'app') openMateria(ACTIVE_ID);
+      else if(CURRENT_VIEW === 'materias') openFolder(ACTIVE_FOLDER_ID);
+      else renderHome();
+    }
+  });
+}
+
+/* ══════════════════════════════════════════
+   THEME
+══════════════════════════════════════════ */
+function applyTheme(){
+  document.documentElement.setAttribute('data-theme', THEME);
+  localStorage.setItem('theme_calc', THEME);
+  var icon = THEME==='dark'?'🌙':'☀️';
+  ['theme-btn-login', 'theme-btn-home', 'theme-btn-app'].forEach(function(id){
+    var b=document.getElementById(id); if(b) b.textContent=icon;
+  });
+}
+function toggleTheme(){THEME=THEME==='dark'?'light':'dark';applyTheme();}
+
+/* ══════════════════════════════════════════
+   NÚCLEO DO SISTEMA DE PASTAS E MATÉRIAS
+══════════════════════════════════════════ */
+function renderHome(){
+  CURRENT_VIEW = 'folders';
+  ACTIVE_FOLDER_ID = null;
+  saveSession();
+
+  document.getElementById('app').style.display = 'none';
+  document.getElementById('home-screen').style.display = 'flex';
+  
+  document.getElementById('home-title').textContent = 'Calculadora de Questões';
+  document.getElementById('home-subtitle').innerHTML = 'Gerencie seus estudos organizados por pastas.';
+  document.getElementById('section-title').textContent = 'Suas Pastas';
+
+  var grid = document.getElementById('saved-grid');
+  var html = '';
+  
+  PASTAS.forEach(function(p){
+    if(!p) return;
+    var mCount = MATERIAS.filter(function(m) { return m && m.folderId === p.id; }).length;
+    html += '<div class="saved-card" onclick="openFolder(\''+p.id+'\')">'+
+              '<div class="card-actions" onclick="event.stopPropagation()">'+
+                '<button class="btn-dots" onclick="toggleMenu(\'f_'+p.id+'\', event)" title="Opções">⋮</button>'+
+                '<div class="dropdown-menu" id="menu-f_'+p.id+'">'+
+                  '<button class="dropdown-item" onclick="renameFolder(\''+p.id+'\'); closeAllMenus(event)">✎ Renomear</button>'+
+                  '<button class="dropdown-item del-item" onclick="deleteFolder(\''+p.id+'\'); closeAllMenus(event)">🗑️ Excluir</button>'+
+                '</div>'+
+              '</div>'+
+              '<svg style="color:var(--acc); width:26px; height:26px; margin-bottom:6px;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"></path></svg>'+
+              '<div class="saved-card-name">'+p.name+'</div><span class="saved-card-meta">'+mCount+' matéria(s)</span></div>';
+  });
+  html += '<button class="add-new-card" onclick="createFolder()">＋ Nova pasta</button>'; 
+  grid.innerHTML = html;
+  initSortable('pastas');
+}
+
+function openFolder(id){
+  var p = PASTAS.find(function(x) { return x && x.id === id; });
+  if(!p) return renderHome();
+  
+  ACTIVE_FOLDER_ID = id;
+  CURRENT_VIEW = 'materias';
+  saveSession();
+
+  document.getElementById('app').style.display = 'none';
+  document.getElementById('home-screen').style.display = 'flex';
+  
+  document.getElementById('home-title').textContent = p.name;
+  document.getElementById('home-subtitle').innerHTML = '<span class="nav-link" onclick="renderHome()">← Voltar para Pastas</span>';
+  document.getElementById('section-title').textContent = 'Matérias';
+
+  var grid = document.getElementById('saved-grid');
+  var html = '';
+  
+  var folderMaterias = MATERIAS.filter(function(m) { return m && m.folderId === id; });
+  folderMaterias.forEach(function(m){
+    var leaves=[]; function gl(n){if(!n.children||!n.children.length){leaves.push(n);return;}n.children.forEach(gl);} m.tree.forEach(gl);
+    html += '<div class="saved-card" onclick="openMateria(\''+m.id+'\')">'+
+              '<div class="card-actions" onclick="event.stopPropagation()">'+
+                '<button class="btn-dots" onclick="toggleMenu(\'m_'+m.id+'\', event)" title="Opções">⋮</button>'+
+                '<div class="dropdown-menu" id="menu-m_'+m.id+'">'+
+                  '<button class="dropdown-item" onclick="editMateriaName(\''+m.id+'\'); closeAllMenus(event)">✎ Renomear</button>'+
+                  '<button class="dropdown-item" onclick="openUpdateModal(\''+m.id+'\'); closeAllMenus(event)">📋 Atualizar Planilha</button>'+
+                  '<button class="dropdown-item del-item" onclick="deleteMateria(\''+m.id+'\'); closeAllMenus(event)">🗑️ Excluir</button>'+
+                '</div>'+
+              '</div>'+
+              '<div class="saved-card-name">'+m.name+'</div><span class="saved-card-meta">'+leaves.length+' tópicos</span></div>';
+  });
+  html += '<button class="add-new-card" onclick="openCreateModal()">＋ Nova matéria</button>'; 
+  grid.innerHTML = html;
+  initSortable('materias');
+}
+
+function createFolder() {
+  var name = prompt("Nome da nova pasta:");
+  if(name && name.trim()) {
+    PASTAS.push({ id: 'p_' + Date.now(), name: name.trim() });
+    saveToLS();
+    renderHome();
+  }
+}
+
+function renameFolder(id) {
+  var p = PASTAS.find(function(x) { return x.id === id; });
+  if(!p) return;
+  var novo = prompt("Renomear pasta:", p.name);
+  if(novo && novo.trim() !== "") {
+    p.name = novo.trim();
+    saveToLS();
+    renderHome();
+  }
+}
+
+function editMateriaName(id) {
+  var m = MATERIAS.find(function(x) { return x.id === id; });
+  if(!m) return;
+  
+  var novo = prompt("Renomear matéria:", m.name);
+  if(novo && novo.trim() !== "") {
+    m.name = novo.trim();
+    saveToLS();
+    openFolder(ACTIVE_FOLDER_ID); 
+  }
+}
+
+function deleteFolder(id) {
+  if(confirm("ATENÇÃO: Deseja excluir esta pasta e TODAS as matérias dentro dela?")) {
+    PASTAS = PASTAS.filter(function(p) { return p.id !== id; });
+    MATERIAS = MATERIAS.filter(function(m) { return m.folderId !== id; });
+    saveToLS();
+    renderHome();
+  }
+}
+
+function goBackToFolder() {
+  if(ACTIVE_FOLDER_ID) openFolder(ACTIVE_FOLDER_ID);
+  else renderHome();
+}
+
+/* ══════════════════════════════════════════
+   NAVEGAÇÃO INTERNA DE MATÉRIAS
+══════════════════════════════════════════ */
+function updateNav() {
+  var folderMaterias = MATERIAS.filter(function(m) { return m.folderId === ACTIVE_FOLDER_ID; });
+  var idx = folderMaterias.findIndex(function(x){ return x.id === ACTIVE_ID; }); 
+  if (idx < 0) return; 
+  document.getElementById('nav-title').textContent = folderMaterias[idx].name; 
+  document.getElementById('nav-prev').disabled = (idx <= 0); 
+  document.getElementById('nav-next').disabled = (idx >= folderMaterias.length - 1);
+}
+
+function navMateria(dir) {
+  var folderMaterias = MATERIAS.filter(function(m) { return m.folderId === ACTIVE_FOLDER_ID; });
+  var idx = folderMaterias.findIndex(function(x){ return x.id === ACTIVE_ID; }); 
+  if (idx < 0) return; 
+  var nidx = idx + dir; 
+  if (nidx >= 0 && nidx < folderMaterias.length) {
+    switchMateria(folderMaterias[nidx].id);
+  }
+}
+
+function switchMateria(id){
+  var m = MATERIAS.find(function(x){return x.id===id;}); 
+  if(!m) return; 
+  ACTIVE_ID = id; TREE = m.tree; OS = m.os || {}; 
+  CURRENT_VIEW = 'app';
+  saveSession();
+  
+  document.getElementById('total').value = m.totalQ || 400;
+  var str = m.strategy || 'equilibrado';
+  updateSegUI(str);
+  
+  document.getElementById('notes-textarea').value = m.notas || "";
+  document.getElementById('notes-panel').style.display = 'none'; 
+  document.getElementById('notes-status').textContent = '';
+  var btnSave = document.getElementById('btn-save-notes');
+  if(btnSave) { btnSave.style.borderColor = ''; btnSave.style.color = ''; }
+
+  updateNav(); 
+  render(); 
+}
+
+function openMateria(id){
+  var m = MATERIAS.find(function(x){return x.id===id;}); 
+  if(!m) return; 
+  ACTIVE_ID = id; TREE = m.tree; OS = m.os || {}; 
+  CURRENT_VIEW = 'app';
+  saveSession();
+  
+  document.getElementById('total').value = m.totalQ || 400;
+  var str = m.strategy || 'equilibrado';
+  updateSegUI(str);
+  
+  document.getElementById('notes-textarea').value = m.notas || "";
+  document.getElementById('notes-panel').style.display = 'none';
+  document.getElementById('home-screen').style.display='none'; 
+  document.getElementById('app').style.display='block'; 
+  updateNav(); render();
+}
+
+function deleteMateria(id){
+  if(!confirm('Remover esta matéria?')) return; 
+  MATERIAS = MATERIAS.filter(function(m){return m.id!==id;}); 
+  saveToLS(); 
+  openFolder(ACTIVE_FOLDER_ID);
+}
+
+/* ══════════════════════════════════════════
+   DROPDOWN MENUS
+══════════════════════════════════════════ */
+function toggleMenu(id, e) {
+  e.stopPropagation();
+  var menu = document.getElementById('menu-'+id);
+  var isShowing = menu.classList.contains('show');
+  closeAllMenus();
+  if(!isShowing) menu.classList.add('show');
+}
+function closeAllMenus(e) {
+  if (e) e.stopPropagation();
+  var menus = document.querySelectorAll('.dropdown-menu.show');
+  menus.forEach(function(m) { m.classList.remove('show'); });
+}
+document.addEventListener('click', function(){ closeAllMenus(); });
+
+/* ══════════════════════════════════════════
+   COLOR & UI HELPERS
+══════════════════════════════════════════ */
+function C(p){
+  if(p>5)    return{dot:'var(--red)',   bg:'var(--red-bg)',   lbl:'Muito alta'};
+  if(p>=3)   return{dot:'var(--orange)',bg:'var(--orange-bg)',lbl:'Alta'};
+  if(p>=1.5) return{dot:'var(--yellow)',bg:'var(--yellow-bg)',lbl:'Média'};
+  if(p>=0.7) return{dot:'var(--blue)',  bg:'var(--blue-bg)',  lbl:'Baixa'};
+  return       {dot:'var(--green)', bg:'var(--green-bg)', lbl:'Muito baixa'};
+}
+function nid(n){return n.h;}
+function BDG(qty,pct,cls){var c=C(pct);return'<span class="'+cls+'" style="background:'+c.bg+';color:'+c.dot+'">'+qty+' questões</span>';}
+function BDGs(qty,pct,cls){var c=C(pct);return'<span class="'+cls+'" style="background:'+c.bg+';color:'+c.dot+'">'+qty+' q.</span>';}
+
+/* ══════════════════════════════════════════
+   BOTÃO DE ESTADO & ANOTAÇÕES
+══════════════════════════════════════════ */
+function setBtnChanged() {
+  var btn = document.getElementById('apply-btn');
+  btn.textContent = 'Recalcular';
+  btn.className = 'apply-btn changed';
+}
+function setBtnSaved() {
+  var btn = document.getElementById('apply-btn');
+  btn.textContent = 'Meta Definida';
+  btn.className = 'apply-btn saved';
+}
+function toggleNotes() {
+  var panel = document.getElementById('notes-panel');
+  panel.style.display = panel.style.display === 'none' ? 'block' : 'none';
+}
+function markNotesUnsaved() {
+  var stat = document.getElementById('notes-status');
+  stat.style.color = 'var(--orange)';
+  stat.textContent = 'Anotação não salva';
+  var btn = document.getElementById('btn-save-notes');
+  btn.style.borderColor = 'var(--orange)';
+  btn.style.color = 'var(--orange)';
+}
+function saveNotes() {
+  var m = MATERIAS.find(function(x){ return x.id === ACTIVE_ID; });
+  if(!m) return;
+  m.notas = document.getElementById('notes-textarea').value;
+  saveToLS();
+  var stat = document.getElementById('notes-status');
+  stat.style.color = 'var(--green)';
+  stat.textContent = 'Salvo na nuvem ✓';
+  var btn = document.getElementById('btn-save-notes');
+  btn.style.borderColor = ''; btn.style.color = '';
+  setTimeout(function(){ stat.textContent = ''; }, 2500);
+}
+
+/* ══════════════════════════════════════════
+   ESTRATÉGIA (SEGMENTED CONTROL)
+══════════════════════════════════════════ */
+function setStrategy(s) {
+  var m = MATERIAS.find(function(x){ return x.id === ACTIVE_ID; });
+  if(m) {
+    m.strategy = s;
+    saveToLS();
+  }
+  updateSegUI(s);
+  render();
+}
+function updateSegUI(s) {
+  document.getElementById('seg-est').classList.toggle('active', s === 'estatistico');
+  document.getElementById('seg-equ').classList.toggle('active', s === 'equilibrado');
+  document.getElementById('seg-exp').classList.toggle('active', s === 'expansivo');
+}
+
+/* ══════════════════════════════════════════
+   CHECKBOX LOGIC & WIDGET
+══════════════════════════════════════════ */
+function getLeaves(n) {
+  if (!n.children || !n.children.length) return [n];
+  var l = []; n.children.forEach(function(c){ l = l.concat(getLeaves(c)); }); return l;
+}
+function getChkStatus(n) {
+  var m = MATERIAS.find(function(x){ return x.id === ACTIVE_ID; });
+  if(!m || !m.sel) return 0; 
+  var leaves = getLeaves(n);
+  var checkedCount = leaves.filter(function(l){ return m.sel.includes(l.h); }).length;
+  if(checkedCount === 0) return 0;
+  if(checkedCount === leaves.length) return 2;
+  return 1;
+}
+function toggleSel(h, e) {
+  if(e) e.stopPropagation();
+  var m = MATERIAS.find(function(x){ return x.id === ACTIVE_ID; });
+  if(!m) return; if(!m.sel) m.sel = [];
+  var node = null;
+  function findNode(arr) {
+    for(var i=0; i<arr.length; i++) {
+      if(arr[i].h === h) return arr[i];
+      if(arr[i].children) { var f = findNode(arr[i].children); if(f) return f; }
+    }
+    return null;
+  }
+  node = findNode(m.tree); if(!node) return;
+  var leaves = getLeaves(node); var status = getChkStatus(node);
+  if(status === 2) {
+    var leafHs = leaves.map(function(l){ return l.h; });
+    m.sel = m.sel.filter(function(x){ return !leafHs.includes(x); });
+  } else {
+    leaves.forEach(function(l){ if(!m.sel.includes(l.h)) m.sel.push(l.h); });
+  }
+  saveToLS(); render();
+}
+function clearSelection() {
+  var m = MATERIAS.find(function(x){ return x.id === ACTIVE_ID; });
+  if(m) m.sel = []; saveToLS(); render();
+}
+function renderChk(n) {
+  var status = getChkStatus(n);
+  var cls = status === 2 ? 'on' : (status === 1 ? 'partial' : '');
+  return '<div class="chk ' + cls + '" onclick="toggleSel(\'' + n.h + '\', event)"><svg class="chk-svg" viewBox="0 0 12 12"><polyline points="2.5 6 5 8.5 9.5 3.5"></polyline></svg></div>';
+}
+
+function updateWidget() {
+  var m = MATERIAS.find(function(x){ return x.id === ACTIVE_ID; });
+  var widget = document.getElementById('widget-calc');
+  if(!m || !m.sel || m.sel.length === 0) { widget.classList.remove('visible'); return; }
+  var totalPct = 0; var count = 0;
+  LEAVES.forEach(function(l){ if(m.sel.includes(l.h)) { totalPct += l.pct; count++; } });
+  document.getElementById('wg-pct').textContent = totalPct.toFixed(2) + '%';
+  document.getElementById('wg-count').textContent = count + (count===1 ? ' assunto marcado' : ' assuntos marcados');
+  var dashValue = Math.min(totalPct, 100); 
+  document.getElementById('wg-ring-path').style.strokeDasharray = dashValue + ', 100';
+  document.getElementById('wg-ring-pct-txt').textContent = Math.round(totalPct) + '%';
+  widget.classList.add('visible');
+}
+
+function toggleWidget() {
+  var w = document.getElementById('widget-calc');
+  w.classList.toggle('collapsed');
+}
+
+/* ══════════════════════════════════════════
+   PARSE & MODALS
+══════════════════════════════════════════ */
+function openModal(){document.getElementById('modal').classList.add('open');}
+function closeModal(){document.getElementById('modal').classList.remove('open');document.getElementById('err').style.display='none';}
+
+function openCreateModal(){
+  EDITING_ID = null;
+  document.getElementById('modal-title').textContent = 'Adicionar matéria';
+  document.getElementById('paste-input').value = '';
+  openModal();
+}
+
+function openUpdateModal(id){
+  var m = MATERIAS.find(function(x){return x.id === id;});
+  if(!m) return;
+  EDITING_ID = id;
+  document.getElementById('modal-title').textContent = 'Atualizar dados da planilha';
+  document.getElementById('paste-input').value = m.rawText || ''; 
+  openModal();
+}
+
+function parseText(raw){
+  var lines=raw.split(/\r?\n/).filter(function(l){return l.trim()!=='';});
+  if(lines.length<2) throw new Error('Poucos dados. Selecione pelo menos o cabeçalho e 1 linha.');
+  var rootNames=[], items=[];
+  var rootIdx = 0; 
+  for(var i=0; i<lines.length; i++){
+    var cols=lines[i].split('\t');
+    while(cols.length<4) cols.push('');
+    var h=cols[0].trim(), name=cols[1].trim();
+    var qty=parseInt((cols[2]||'').replace(/[^\d]/g,''))||0;
+    var pct=parseFloat((cols[3]||'').replace('%','').replace(',','.'))||0;
+    if(!name) continue;
+    if(/^hierarquia$/i.test(h)) continue;
+    if(!h||/^nan$/i.test(h)){ rootIdx++; rootNames.push(name); continue; }
+    if(rootIdx === 0) rootIdx = 1; 
+    items.push({ h: h, _rid: rootIdx, name: name, qty: qty, pct: pct });
+  }
+  if(!items.length) throw new Error('Nenhum item com código de hierarquia encontrado.');
+  var map={}, roots=[];
+  items.forEach(function(it){
+    var uniqueH = it._rid + '_' + it.h; 
+    var node={name:it.name, qty:it.qty, pct:it.pct, h:uniqueH, children:[], _id:null, _qty:0};
+    map[uniqueH] = node;
+    var parts = it.h.split('.');
+    var placed = false;
+    for(var k=parts.length-1; k>=1; k--){
+      var pk = it._rid + '_' + parts.slice(0,k).join('.');
+      if(map[pk]){ map[pk].children.push(node); placed=true; break; }
+    }
+    if(!placed) roots.push(node);
+  });
+  var finalName = rootNames.length ? rootNames.join(' + ') : 'Questões';
+  if(finalName.length > 55) finalName = finalName.substring(0, 52) + '...';
+  return { rootName: finalName, tree: roots };
+}
+
+function findNodeByH(tree, h) {
+  for(var i=0; i<tree.length; i++) {
+    if(tree[i].h === h) return tree[i];
+    if(tree[i].children && tree[i].children.length) {
+      var f = findNodeByH(tree[i].children, h);
+      if(f) return f;
+    }
+  }
+  return null;
+}
+
+function buildNameMap(tree, map) {
+  map = map || {};
+  tree.forEach(function(n) {
+    map[n.name] = n.h;
+    if(n.children && n.children.length) buildNameMap(n.children, map);
+  });
+  return map;
+}
+
+function processPaste(){
+  var raw=document.getElementById('paste-input').value; var err=document.getElementById('err'); err.style.display='none';
+  if(!raw.trim()){err.textContent='Cole os dados primeiro.';err.style.display='inline';return;}
+  try{
+    var res=parseText(raw); 
+    if (EDITING_ID) {
+      var m = MATERIAS.find(function(x){return x.id === EDITING_ID;});
+      if(m) {
+        var newNameMap = buildNameMap(res.tree, {});
+        var newSel = [];
+        if(m.sel && m.sel.length > 0) {
+          m.sel.forEach(function(oldH) {
+            var oldNode = findNodeByH(m.tree, oldH);
+            if(oldNode) {
+              var stillExists = findNodeByH(res.tree, oldH);
+              if(stillExists) { newSel.push(oldH); } 
+              else {
+                var newH = newNameMap[oldNode.name]; 
+                if(newH && !newSel.includes(newH)) { newSel.push(newH); }
+              }
+            }
+          });
+        }
+        m.rawText = raw; m.tree = res.tree; m.sel = newSel; 
+      }
+      saveToLS(); closeModal(); document.getElementById('paste-input').value=''; openFolder(ACTIVE_FOLDER_ID);
+    } else {
+      var id='m_'+Date.now();
+      MATERIAS.push({
+        id:id, name:res.rootName, rawText:raw, tree:res.tree, 
+        sel:[], totalQ: 400, notas: "", strategy: 'equilibrado', folderId: ACTIVE_FOLDER_ID
+      });
+      saveToLS(); closeModal(); document.getElementById('paste-input').value=''; openMateria(id);
+    }
+  }catch(e){err.textContent=e.message;err.style.display='inline';}
+}
+
+function loadExample(){document.getElementById('paste-input').value=['Hierarquia\tÍndice\tQuantidade\tPorcentagem','\tDireito Administrativo\t7777\t100%','01\tOrigem e Conceito\t182\t2.34%','02\tRegime Jurídico Administrativo\t705\t9.07%','02.01\tPrincípios Expressos\t424\t5.45%','02.02\tPrincípios Implícitos\t222\t2.85%','03\tAtos Administrativos\t1599\t20.56%','03.01\tConceito de Atos Administrativos\t102\t1.31%','03.02\tEspécies e Classificação\t431\t5.54%','03.03\tDesfazimento do Ato Administrativo\t411\t5.28%','03.04\tAtributos dos Atos Administrativos\t257\t3.30%','03.05\tElementos e Requisitos\t187\t2.40%','04\tPoderes da Administração\t1004\t12.91%','04.01\tPoder de Polícia\t348\t4.47%','04.02\tPoder Hierárquico\t122\t1.57%','04.03\tPoder Disciplinar\t123\t1.58%','05\tOrganização Administrativa\t1882\t24.20%','05.01\tAdministração Indireta\t828\t10.65%','05.02\tTerceiro Setor\t288\t3.70%','05.03\tDesconcentração e Descentralização\t284\t3.65%'].join('\n');}
+
+/* ══════════════════════════════════════════
+   ALLOCATION 3.9 (ESTRATÉGIAS AVANÇADAS)
+══════════════════════════════════════════ */
+function gatherLeaves(n){if(!n.children||!n.children.length){LEAVES.push(n);return;}n.children.forEach(gatherLeaves);}
+
+function alloc(total){
+  var m = MATERIAS.find(function(x){ return x.id === ACTIVE_ID; });
+  var strat = m ? (m.strategy || 'equilibrado') : 'equilibrado';
+  
+  var raws=LEAVES.map(function(n){return(n.pct/100)*total;});
+  var qs;
+
+  if(strat === 'estatistico') {
+    qs=raws.map(function(r){return Math.max(0,Math.round(r));});
+  } else if(strat === 'equilibrado') {
+    qs=raws.map(function(r){return Math.max(1,Math.round(r));});
+  } else {
+    qs=raws.map(function(r){return Math.max(0,Math.round(r));});
+  }
+
+  var diff=total-qs.reduce(function(s,v){return s+v;},0);
+  if(diff !== 0){
+    var candidates = LEAVES.map(function(n, i){ return {i: i, pct: n.pct}; });
+    
+    if(diff < 0) {
+      var minAllowed = (strat === 'equilibrado' ? 1 : 0);
+      candidates = candidates.filter(function(c){ return qs[c.i] > minAllowed; });
+      candidates.sort(function(a,b){ return a.pct - b.pct; }); 
+    } else {
+      candidates.sort(function(a,b){ return b.pct - a.pct; }); 
+    }
+
+    var loops = Math.abs(diff);
+    var ci = 0;
+    while(loops > 0 && candidates.length > 0) {
+      var idx = candidates[ci % candidates.length].i;
+      if (diff > 0) {
+        qs[idx]++; loops--; ci++;
+      } else {
+        var minAllowed = (strat === 'equilibrado' ? 1 : 0);
+        if (qs[idx] > minAllowed) {
+          qs[idx]--; loops--; ci++;
+        } else {
+          candidates.splice(ci % candidates.length, 1);
+        }
+      }
+    }
+  }
+  
+  if(strat === 'expansivo') {
+    qs = qs.map(function(q){ return Math.max(1, q); });
+  }
+
+  LEAVES.forEach(function(n,i){n._qty=qs[i];});
+}
+
+function sqty(n){if(!n.children||!n.children.length)return n._qty||0;return n.children.reduce(function(s,c){return s+sqty(c);},0);}
+
+/* ══════════════════════════════════════════
+   RENDER APP
+══════════════════════════════════════════ */
+function R4(n){var c=C(n.pct); return'<div class="row r4"><div class="rl">'+renderChk(n)+'<span class="d4" style="background:'+c.dot+'"></span><span class="n4">'+n.name+'</span></div><div class="rr"><span class="pct">'+n.pct.toFixed(2)+'%</span>'+BDG(n._qty,n.pct,'badge4')+'</div></div>';}
+function R3(n){var c=C(n.pct),isL=!n.children||!n.children.length; if(isL)return'<div class="row r3 lf"><div class="rl">'+renderChk(n)+'<span class="d3" style="background:'+c.dot+'"></span><span class="n3">'+n.name+'</span></div><div class="rr"><span class="pct">'+n.pct.toFixed(2)+'%</span>'+BDG(n._qty,n.pct,'badge3')+'</div></div>'; var i=nid(n); var o = (OS[i] === undefined) ? true : OS[i]; var q=sqty(n); return'<div class="row r3" onclick="T(\''+i+'\')"><div class="rl">'+renderChk(n)+'<span class="d3" style="background:'+c.dot+'"></span><span class="n3" style="font-weight:600;color:var(--t1)">'+n.name+'</span></div><div class="rr"><span class="pct">'+n.pct.toFixed(2)+'%</span>'+BDGs(q,n.pct,'badge3')+'<span class="cv '+(o?'o':'')+'">▾</span></div></div><div class="ch3 '+(o?'o':'')+'">'+n.children.map(R4).join('')+'</div>';}
+function R2(n){var c=C(n.pct),isL=!n.children||!n.children.length; if(isL)return'<div class="row r2 lf"><div class="rl">'+renderChk(n)+'<span class="d2" style="background:'+c.dot+'"></span><span class="n2">'+n.name+'</span></div><div class="rr"><span class="pct">'+n.pct.toFixed(2)+'%</span>'+BDG(n._qty,n.pct,'badge2')+'</div></div>'; var i=nid(n); var o = (OS[i] === undefined) ? true : OS[i]; var q=sqty(n); return'<div class="row r2" onclick="T(\''+i+'\')"><div class="rl">'+renderChk(n)+'<span class="d2" style="background:'+c.dot+'"></span><span class="n2" style="font-weight:600">'+n.name+'</span></div><div class="rr"><span class="pct">'+n.pct.toFixed(2)+'%</span>'+BDG(q,n.pct,'badge2')+'<span class="cv '+(o?'o':'')+'">▾</span></div></div><div class="ch2 '+(o?'o':'')+'">'+n.children.map(R3).join('')+'</div>';}
+function R1(n){var c=C(n.pct),isL=!n.children||!n.children.length,q=sqty(n); if(isL)return'<div class="block"><div class="row r1" style="cursor:default"><div class="rl">'+renderChk(n)+'<span class="d1" style="background:'+c.dot+'"></span><span class="n1">'+n.name+'</span></div><div class="rr"><span class="pct">'+n.pct.toFixed(2)+'%</span>'+BDG(q,n.pct,'badge')+'</div></div></div>'; var i=nid(n); var o = (OS[i] === undefined) ? true : OS[i]; return'<div class="block"><div class="row r1 '+(o?'sep':'')+'" onclick="T(\''+i+'\')"><div class="rl">'+renderChk(n)+'<span class="d1" style="background:'+c.dot+'"></span><span class="n1">'+n.name+'</span></div><div class="rr"><span class="pct">'+n.pct.toFixed(2)+'%</span>'+BDG(q,n.pct,'badge')+'<span class="cv '+(o?'o':'')+'">▾</span></div></div><div class="ch '+(o?'o':'')+'">'+n.children.map(R2).join('')+'</div></div>';}
+function flatL(nodes,par){var out=[]; nodes.forEach(function(n){if(!n.children||!n.children.length) out.push({name:n.name, pct:n.pct, _qty:n._qty, par:par||'', h:n.h}); else out=out.concat(flatL(n.children,n.name));}); return out;}
+function renderRel(){var m = MATERIAS.find(function(x){ return x.id === ACTIVE_ID; }); var all=flatL(TREE,'').sort(function(a,b){return b.pct-a.pct;}); return'<div class="rel-list">'+all.map(function(n,i){var c=C(n.pct); var chkStatus = (m && m.sel && m.sel.includes(n.h)) ? 'on' : ''; return'<div class="ri"><span class="ri-rank">'+(i+1)+'</span><div class="chk ' + chkStatus + '" onclick="toggleSel(\'' + n.h + '\', event)"><svg class="chk-svg" viewBox="0 0 12 12"><polyline points="2.5 6 5 8.5 9.5 3.5"></polyline></svg></div><span class="ri-dot" style="background:'+c.dot+'"></span><div class="ri-info"><div class="ri-name">'+n.name+'</div>'+(n.par?'<div class="ri-par">'+n.par+'</div>':'')+'</div><div class="ri-r"><span class="ri-qty" style="color:'+c.dot+'">'+n._qty+'</span><span class="ri-pct">'+n.pct.toFixed(2)+'%</span><span class="ri-badge" style="background:'+c.bg+';color:'+c.dot+'">'+c.lbl+'</span></div></div>';}).join('')+'</div>';}
+
+function T(i){
+  if(OS[i] === undefined) { OS[i] = false; } 
+  else { OS[i] = !OS[i]; }
+  saveToLS();
+  render();
+}
+
+function setMode(m){MODE=m;document.getElementById('tm').classList.toggle('active',m==='mat');document.getElementById('tr').classList.toggle('active',m==='rel');render();}
+
+function render(){
+  UID=0; 
+  var total=Math.max(1,parseInt(document.getElementById('total').value)||400); 
+  
+  var m = MATERIAS.find(function(x){ return x.id === ACTIVE_ID; });
+  var strat = 'equilibrado';
+  if(m) {
+    m.totalQ = total;
+    strat = m.strategy || 'equilibrado';
+    saveToLS(); 
+  }
+
+  LEAVES=[];TREE.forEach(gatherLeaves);alloc(total);
+  var a=LEAVES.reduce(function(s,n){return s+(n._qty||0);},0); 
+  
+  var saEl = document.getElementById('sa');
+  saEl.textContent=a; 
+  
+  if(strat === 'expansivo' && a > total) {
+    saEl.style.color = 'var(--acc)';
+    saEl.style.fontWeight = '800';
+  } else {
+    saEl.style.color = '';
+    saEl.style.fontWeight = '';
+  }
+
+  document.getElementById('st').textContent=LEAVES.length;
+  document.getElementById('main').innerHTML=MODE==='mat'?TREE.map(R1).join(''):renderRel();
+  
+  var footStr = total + ' questões base · ' + a + ' alocadas reais · ' + LEAVES.length + ' tópicos';
+  var footEl = document.getElementById('foot-stats');
+  footEl.textContent = footStr;
+  if(strat === 'expansivo' && a > total) footEl.style.color = 'var(--acc)';
+  else footEl.style.color = '';
+
+  setBtnSaved(); 
+  updateWidget();
+}
+
+function step(v){
+  var el=document.getElementById('total');
+  el.value=Math.max(1,(parseInt(el.value)||0)+v);
+  setBtnChanged(); 
+}
+
+/* ══════════════════════════════════════════
+   INICIALIZAÇÃO DOS EVENTOS
+══════════════════════════════════════════ */
+applyTheme();
+document.getElementById('paste-input').addEventListener('keydown',function(e){if(e.ctrlKey&&e.key==='Enter')processPaste();});
+document.getElementById('total').addEventListener('keydown',function(e){if(e.key==='Enter')render();});
+document.getElementById('total').addEventListener('input', setBtnChanged);
+document.getElementById('modal').addEventListener('click',function(e){if(e.target===this)closeModal();});
+/* ══════════════════════════════════════════
+   SISTEMA DE DRAG E DROP MODERNO (SORTABLE)
+══════════════════════════════════════════ */
+var currentSortable = null;
+
+function initSortable(type) {
+  var grid = document.getElementById('saved-grid');
+  if(!grid) return;
+  
+  if(currentSortable) currentSortable.destroy(); // Limpa se já existir
+  
+  currentSortable = new Sortable(grid, {
+    animation: 250, // Animação super suave de 250ms
+    ghostClass: 'sortable-ghost', 
+    dragClass: 'sortable-drag',
+    filter: '.add-new-card', // Impede que você arraste o botão "Nova pasta"
+    preventOnFilter: false,
+    onEnd: function (evt) {
+      if(evt.oldIndex === evt.newIndex) return; 
+      
+      if(type === 'pastas') {
+        var draggedItem = PASTAS.splice(evt.oldIndex, 1)[0];
+        PASTAS.splice(evt.newIndex, 0, draggedItem);
+      } 
+      else if(type === 'materias') {
+        var folderMaterias = MATERIAS.filter(function(m) { return m && m.folderId === ACTIVE_FOLDER_ID; });
+        var outrasMaterias = MATERIAS.filter(function(m) { return !m || m.folderId !== ACTIVE_FOLDER_ID; });
+        
+        var draggedItem = folderMaterias.splice(evt.oldIndex, 1)[0];
+        folderMaterias.splice(evt.newIndex, 0, draggedItem);
+        
+        // Reconstrói a lista geral e salva
+        MATERIAS = outrasMaterias.concat(folderMaterias);
+      }
+      saveToLS();
+    }
+  });
+}
 </script>
 </body>
 </html>
